@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/jopenlibs/db-kqueue.svg?branch=master)](https://travis-ci.com/github/jopenlibs/db-kqueue/branches)
+[![Build Status](https://github.com/jopenlibs/db-kqueue/actions/workflows/gradle.yml/badge.svg)](https://github.com/jopenlibs/db-kqueue/actions/workflows/gradle.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Javadoc](https://img.shields.io/badge/javadoc-latest-blue.svg)](https://jopenlibs.github.io/db-kqueue/)
 [![Download](https://img.shields.io/badge/Download-latest)](https://search.maven.org/artifact/ru.yoomoney.tech/db-queue)
