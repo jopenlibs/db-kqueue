@@ -1,20 +1,17 @@
-[![Build Status](https://travis-ci.com/yoomoney/db-queue.svg?branch=master)](https://travis-ci.com/github/yoomoney/db-queue/branches)
+[![Build Status](https://travis-ci.com/jopenlibs/db-kqueue.svg?branch=master)](https://travis-ci.com/github/jopenlibs/db-kqueue/branches)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Javadoc](https://img.shields.io/badge/javadoc-latest-blue.svg)](https://yoomoney.github.io/db-queue/)
+[![Javadoc](https://img.shields.io/badge/javadoc-latest-blue.svg)](https://jopenlibs.github.io/db-kqueue/)
 [![Download](https://img.shields.io/badge/Download-latest)](https://search.maven.org/artifact/ru.yoomoney.tech/db-queue)
 
 # Database Queue
 
-Library provides worker-queue implementation on top of Java and database.
+Library provides worker-queue implementation on top of Kotlin and database.
 
-Fintech company [YooMoney](https://yoomoney.ru/) uses db-queue in cases where reliability is a must-have requirement.
+The project are forked from [YooMoney db-queue](https://github.com/yoomoney/db-queue).
 
-Project uses [Semantic Versioning](http://semver.org/).  
-Library is available on [Maven Central](https://search.maven.org/)
-
-```
-implementation 'ru.yoomoney.tech:db-queue:15.0.0'
-```
+Fork motivation:
+* support Kotlin coroutines & structured concurrency;
+* support r2dbc DAO.
 
 ## Why?
 
@@ -51,7 +48,7 @@ There are several reasons:
 * Configuration reload in
   runtime ([QueueService#updateQueueConfigs](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/config/QueueService.java))
 * Reading queue configuration from file and dynamic reloading when file changed
-  ([QueueConfigsReader](src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueConfigsReader.java),
+  ([QueueConfigsReader](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueConfigsReader.java),
   [QueueConfigsReloader](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueConfigsReloader.java)).
 * Storing queue tasks in a separate
   tables ([QueueLocation](db-queue-core/src/main/java/ru/yoomoney/tech/dbqueue/settings/QueueLocation.java)).
