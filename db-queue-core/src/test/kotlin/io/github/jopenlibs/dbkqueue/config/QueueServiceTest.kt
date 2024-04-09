@@ -14,8 +14,9 @@ import io.github.jopenlibs.dbkqueue.settings.QueueSettings
 import io.github.jopenlibs.dbkqueue.settings.ReenqueueRetryType
 import io.github.jopenlibs.dbkqueue.settings.ReenqueueSettings
 import io.github.jopenlibs.dbkqueue.stub.TestFixtures
-import org.hamcrest.CoreMatchers
-import org.junit.Assert
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.mock
@@ -102,18 +103,16 @@ class QueueServiceTest {
         }
 
         verifyNoInteractions(queueExecutionPool)
-        Assert.assertThat(
-            errorMessages.toString(), CoreMatchers.equalTo(
-                "[cannot invoke start, queue is not registered: queueId=test, " +
-                        "cannot invoke pause, queue is not registered: queueId=test, " +
-                        "cannot invoke unpause, queue is not registered: queueId=test, " +
-                        "cannot invoke isPaused, queue is not registered: queueId=test, " +
-                        "cannot invoke isShutdown, queue is not registered: queueId=test, " +
-                        "cannot invoke isTerminated, queue is not registered: queueId=test, " +
-                        "cannot invoke awaitTermination, queue is not registered: queueId=test, " +
-                        "cannot invoke wakeup, queue is not registered: queueId=test" +
-                        "]"
-            )
+        assertThat(errorMessages.toString()).isEqualTo(
+            "[cannot invoke start, queue is not registered: queueId=test, " +
+                    "cannot invoke pause, queue is not registered: queueId=test, " +
+                    "cannot invoke unpause, queue is not registered: queueId=test, " +
+                    "cannot invoke isPaused, queue is not registered: queueId=test, " +
+                    "cannot invoke isShutdown, queue is not registered: queueId=test, " +
+                    "cannot invoke isTerminated, queue is not registered: queueId=test, " +
+                    "cannot invoke awaitTermination, queue is not registered: queueId=test, " +
+                    "cannot invoke wakeup, queue is not registered: queueId=test" +
+                    "]"
         )
     }
 
@@ -135,8 +134,8 @@ class QueueServiceTest {
             mock(),
             mock()
         )
-        Assert.assertTrue(queueService.registerQueue(consumer))
-        Assert.assertFalse(queueService.registerQueue(consumer))
+        assertTrue(queueService.registerQueue(consumer))
+        assertFalse(queueService.registerQueue(consumer))
     }
 
     @Test
@@ -179,8 +178,8 @@ class QueueServiceTest {
                 }
                 throw IllegalArgumentException("unknown consumer")
             })
-        Assert.assertTrue(queueService.registerQueue(consumer1))
-        Assert.assertTrue(queueService.registerQueue(consumer2))
+        assertTrue(queueService.registerQueue(consumer1))
+        assertTrue(queueService.registerQueue(consumer2))
         queueService.start()
         queueService.start(queueId1)
         queueService.pause()
@@ -241,16 +240,16 @@ class QueueServiceTest {
         )
 
         val queueService = QueueService(
-            Arrays.asList(DEFAULT_SHARD, shard2),
+            listOf(DEFAULT_SHARD, shard2),
             BiFunction<QueueShard<*>, QueueConsumer<Any?>, QueueExecutionPool> { shard: QueueShard<*>, queueConsumer: QueueConsumer<*>? ->
-                if (shard.shardId.equals(DEFAULT_SHARD.shardId)) {
+                if (shard.shardId == DEFAULT_SHARD.shardId) {
                     return@BiFunction queueExecutionPool1
-                } else if (shard.shardId.equals(shard2.shardId)) {
+                } else if (shard.shardId == shard2.shardId) {
                     return@BiFunction queueExecutionPool2
                 }
                 throw IllegalArgumentException("unknown consumer")
             })
-        Assert.assertTrue(queueService.registerQueue(consumer1))
+        assertTrue(queueService.registerQueue(consumer1))
         queueService.start()
         queueService.pause()
         queueService.unpause()
@@ -295,13 +294,12 @@ class QueueServiceTest {
         whenever(queueExecutionPool.isTerminated).thenReturn(false)
         whenever(queueExecutionPool.queueShardId).thenReturn(DEFAULT_SHARD.shardId)
         val queueService = QueueService(
-            Arrays.asList(DEFAULT_SHARD)
+            listOf(DEFAULT_SHARD)
         ) { shard: QueueShard<*>?, queueConsumer: QueueConsumer<*>? -> queueExecutionPool }
 
-        Assert.assertTrue(queueService.registerQueue(consumer))
-        Assert.assertThat(
-            queueService.awaitTermination(queueId, Duration.ofMinutes(1)),
-            CoreMatchers.equalTo(listOf(DEFAULT_SHARD.shardId))
+        assertTrue(queueService.registerQueue(consumer))
+        assertThat(queueService.awaitTermination(queueId, Duration.ofMinutes(1))).isEqualTo(
+            listOf(DEFAULT_SHARD.shardId)
         )
         verify(queueExecutionPool).awaitTermination(Duration.ofMinutes(1))
         verify(queueExecutionPool).isTerminated
@@ -345,10 +343,10 @@ class QueueServiceTest {
         whenever(consumer.queueConfig).thenReturn(oldConfig)
         val queueExecutionPool = Mockito.mock(QueueExecutionPool::class.java)
         val queueService = QueueService(
-            Arrays.asList(DEFAULT_SHARD)
+            listOf(DEFAULT_SHARD)
         ) { shard: QueueShard<*>?, queueConsumer: QueueConsumer<*>? -> queueExecutionPool }
 
-        Assert.assertTrue(queueService.registerQueue(consumer))
+        assertTrue(queueService.registerQueue(consumer))
 
         val newConfig = QueueConfig(
             QueueLocation.builder().withTableName("testTable")
@@ -383,19 +381,17 @@ class QueueServiceTest {
                 .build()
         )
 
-        val diff = queueService.updateQueueConfigs(Arrays.asList(newConfig))
-        Assert.assertThat(diff.size, CoreMatchers.equalTo(1))
-        Assert.assertThat(
-            diff[queueId], CoreMatchers.equalTo(
-                "" +
-                        "processingSettings(threadCount=0<1,processingMode=WRAP_IN_TRANSACTION<SEPARATE_TRANSACTIONS)," +
-                        "pollSettings(betweenTaskTimeout=PT0.001S<PT0S,noTaskTimeout=PT0.002S<PT0S,fatalCrashTimeout=PT3S<PT0S)," +
-                        "failureSettings(retryType=ARITHMETIC_BACKOFF<GEOMETRIC_BACKOFF,retryInterval=PT2M<PT1M)," +
-                        "reenqueueSettings(type=FIXED<MANUAL,fixedDelay=PT1M<null)," +
-                        "extSettings(two=2<null,one=null<1)"
-            )
+        val diff = queueService.updateQueueConfigs(listOf(newConfig))
+        assertThat(diff.size).isEqualTo(1)
+        assertThat(diff[queueId]).isEqualTo(
+            "" +
+                    "processingSettings(threadCount=0<1,processingMode=WRAP_IN_TRANSACTION<SEPARATE_TRANSACTIONS)," +
+                    "pollSettings(betweenTaskTimeout=PT0.001S<PT0S,noTaskTimeout=PT0.002S<PT0S,fatalCrashTimeout=PT3S<PT0S)," +
+                    "failureSettings(retryType=ARITHMETIC_BACKOFF<GEOMETRIC_BACKOFF,retryInterval=PT2M<PT1M)," +
+                    "reenqueueSettings(type=FIXED<MANUAL,fixedDelay=PT1M<null)," +
+                    "extSettings(two=2<null,one=null<1)"
         )
-        Assert.assertThat(consumer.queueConfig, CoreMatchers.equalTo(newConfig))
+        assertThat(consumer.queueConfig).isEqualTo(newConfig)
     }
 
     @Test
@@ -415,14 +411,11 @@ class QueueServiceTest {
         whenever(queueExecutionPool.queueShardId).thenReturn(DEFAULT_SHARD.shardId)
 
         val queueService = QueueService(
-            Arrays.asList(DEFAULT_SHARD)
+            listOf(DEFAULT_SHARD)
         ) { shard: QueueShard<*>?, queueConsumer: QueueConsumer<*>? -> queueExecutionPool }
 
-        Assert.assertTrue(queueService.registerQueue(consumer))
-        Assert.assertThat(
-            queueService.awaitTermination(Duration.ofMinutes(1)),
-            CoreMatchers.equalTo(listOf(queueId))
-        )
+        assertTrue(queueService.registerQueue(consumer))
+        assertThat(queueService.awaitTermination(Duration.ofMinutes(1))).isEqualTo(listOf(queueId))
         verify(queueExecutionPool).awaitTermination(Duration.ofMinutes(1))
         verify(queueExecutionPool, times(2)).isTerminated
     }

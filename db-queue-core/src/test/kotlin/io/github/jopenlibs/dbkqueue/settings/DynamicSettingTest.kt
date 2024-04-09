@@ -1,11 +1,12 @@
 package io.github.jopenlibs.dbkqueue.settings
 
-import org.hamcrest.CoreMatchers
-import org.hamcrest.MatcherAssert
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.function.BiFunction
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class DynamicSettingTest {
     @Test
@@ -17,9 +18,10 @@ class DynamicSettingTest {
         }
         val newSetting = SimpleDynamicSetting("old")
         val diff = oldSetting.setValue(newSetting)
-        MatcherAssert.assertThat(diff, CoreMatchers.equalTo(Optional.empty<Any>()))
-        MatcherAssert.assertThat(observerInvoked.get(), CoreMatchers.equalTo(false))
-        MatcherAssert.assertThat(oldSetting, CoreMatchers.equalTo(newSetting))
+
+        assertThat(diff).isEqualTo(Optional.empty<Any>())
+        assertFalse(observerInvoked.get())
+        assertThat(oldSetting).isEqualTo(newSetting)
     }
 
     @Test
@@ -31,9 +33,10 @@ class DynamicSettingTest {
         }
         val newSetting = SimpleDynamicSetting("new")
         val diff = oldSetting.setValue(newSetting)
-        MatcherAssert.assertThat(diff, CoreMatchers.equalTo(Optional.of("new<old")))
-        MatcherAssert.assertThat(observerInvoked.get(), CoreMatchers.equalTo(true))
-        MatcherAssert.assertThat(oldSetting, CoreMatchers.equalTo(newSetting))
+
+        assertThat(diff).isEqualTo(Optional.of("new<old"))
+        assertTrue(observerInvoked.get())
+        assertThat(oldSetting).isEqualTo(newSetting)
     }
 
     @Test
@@ -44,8 +47,9 @@ class DynamicSettingTest {
         }
         val newSetting = SimpleDynamicSetting("new")
         val diff = oldSetting.setValue(newSetting)
-        MatcherAssert.assertThat(diff, CoreMatchers.equalTo(Optional.empty<Any>()))
-        MatcherAssert.assertThat(oldSetting, CoreMatchers.not(CoreMatchers.equalTo(newSetting)))
+
+        assertThat(diff).isEqualTo(Optional.empty<Any>())
+        assertThat(oldSetting).isNotEqualTo(newSetting)
     }
 
     class SimpleDynamicSetting(private var text: String) : DynamicSetting<SimpleDynamicSetting>() {
@@ -63,10 +67,10 @@ class DynamicSettingTest {
             this.text = newValue.text
         }
 
-        override fun equals(o: Any?): Boolean {
-            if (this === o) return true
-            if (o == null || javaClass != o.javaClass) return false
-            val that = o as SimpleDynamicSetting
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || javaClass != other.javaClass) return false
+            val that = other as SimpleDynamicSetting
             return text == that.text
         }
 

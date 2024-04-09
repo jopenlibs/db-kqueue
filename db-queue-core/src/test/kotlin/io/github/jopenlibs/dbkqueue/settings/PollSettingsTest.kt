@@ -2,9 +2,8 @@ package io.github.jopenlibs.dbkqueue.settings
 
 import nl.jqno.equalsverifier.EqualsVerifier
 import nl.jqno.equalsverifier.Warning
-import org.hamcrest.CoreMatchers
-import org.junit.Assert
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.util.*
 
@@ -24,10 +23,8 @@ class PollSettingsTest {
         val newValue = PollSettings.builder().withBetweenTaskTimeout(Duration.ofSeconds(4))
             .withNoTaskTimeout(Duration.ofSeconds(5)).withFatalCrashTimeout(Duration.ofSeconds(6)).build()
         val diff = oldValue.setValue(newValue)
-        Assert.assertThat(
-            diff,
-            CoreMatchers.equalTo(Optional.of("pollSettings(betweenTaskTimeout=PT4S<PT1S,noTaskTimeout=PT5S<PT2S,fatalCrashTimeout=PT6S<PT3S)"))
-        )
-        Assert.assertThat(oldValue, CoreMatchers.equalTo(newValue))
+
+        assertThat(diff).isEqualTo(Optional.of("pollSettings(betweenTaskTimeout=PT4S<PT1S,noTaskTimeout=PT5S<PT2S,fatalCrashTimeout=PT6S<PT3S)"))
+        assertThat(oldValue).isEqualTo(newValue)
     }
 }

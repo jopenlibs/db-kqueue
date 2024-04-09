@@ -10,64 +10,61 @@ import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
 import io.github.jopenlibs.dbkqueue.stub.TestFixtures
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers
-import org.junit.Assert
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
 
 class ShardingQueueProducerTest {
     @Test
-    fun should_insert_task_on_designated_shard() = runBlocking {
-        val stubDatabaseAccessLayer = StubDatabaseAccessLayer()
-        val firstShard = QueueShard(
-            QueueShardId("first"),
-            stubDatabaseAccessLayer
-        )
-        val secondShard = QueueShard(
-            QueueShardId("second"),
-            stubDatabaseAccessLayer
-        )
-
-        val queueConfig = QueueConfig(
-            QueueLocation.builder()
-                .withTableName("testTable")
-                .withQueueId(QueueId("main")).build(),
-            TestFixtures.createQueueSettings().build()
-        )
-
-        val queueDao = stubDatabaseAccessLayer.queueDao
-        whenever(
-            queueDao.enqueue(queueConfig.location, io.github.jopenlibs.dbkqueue.api.EnqueueParams.create("1"))
-        ).doReturn(11L)
-
-        whenever(
-            queueDao.enqueue(
-                queueConfig.location,
-                io.github.jopenlibs.dbkqueue.api.EnqueueParams.create("2")
+    fun should_insert_task_on_designated_shard() {
+        runBlocking {
+            val stubDatabaseAccessLayer = StubDatabaseAccessLayer()
+            val firstShard = QueueShard(
+                QueueShardId("first"),
+                stubDatabaseAccessLayer
             )
-        ).doReturn(22L)
-
-        val queueProducer: ShardingQueueProducer<String, StubDatabaseAccessLayer> =
-            ShardingQueueProducer(
-                queueConfig, NoopPayloadTransformer.instance, StubQueueShardRouter(firstShard, secondShard)
+            val secondShard = QueueShard(
+                QueueShardId("second"),
+                stubDatabaseAccessLayer
             )
 
-        val enqueueResult1 = queueProducer.enqueue(io.github.jopenlibs.dbkqueue.api.EnqueueParams.create("1"))
-        Assert.assertThat(
-            enqueueResult1, CoreMatchers.equalTo(
+            val queueConfig = QueueConfig(
+                QueueLocation.builder()
+                    .withTableName("testTable")
+                    .withQueueId(QueueId("main")).build(),
+                TestFixtures.createQueueSettings().build()
+            )
+
+            val queueDao = stubDatabaseAccessLayer.queueDao
+            whenever(
+                queueDao.enqueue(queueConfig.location, io.github.jopenlibs.dbkqueue.api.EnqueueParams.create("1"))
+            ).doReturn(11L)
+
+            whenever(
+                queueDao.enqueue(
+                    queueConfig.location,
+                    io.github.jopenlibs.dbkqueue.api.EnqueueParams.create("2")
+                )
+            ).doReturn(22L)
+
+            val queueProducer: ShardingQueueProducer<String, StubDatabaseAccessLayer> =
+                ShardingQueueProducer(
+                    queueConfig, NoopPayloadTransformer.instance, StubQueueShardRouter(firstShard, secondShard)
+                )
+
+            val enqueueResult1 = queueProducer.enqueue(io.github.jopenlibs.dbkqueue.api.EnqueueParams.create("1"))
+            assertThat(enqueueResult1).isEqualTo(
                 EnqueueResult.builder().withEnqueueId(11L)
                     .withShardId(firstShard.shardId).build()
             )
-        )
 
-        val enqueueResult2 = queueProducer.enqueue(io.github.jopenlibs.dbkqueue.api.EnqueueParams.create("2"))
-        Assert.assertThat(
-            enqueueResult2, CoreMatchers.equalTo(
+            val enqueueResult2 = queueProducer.enqueue(io.github.jopenlibs.dbkqueue.api.EnqueueParams.create("2"))
+            assertThat(enqueueResult2).isEqualTo(
                 EnqueueResult.builder().withEnqueueId(22L)
                     .withShardId(secondShard.shardId).build()
             )
-        )
+        }
     }
 
     private class StubQueueShardRouter(

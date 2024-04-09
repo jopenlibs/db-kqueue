@@ -1,7 +1,7 @@
 package io.github.jopenlibs.dbkqueue.api
 
 import nl.jqno.equalsverifier.EqualsVerifier
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * @author Oleg Kandaurov

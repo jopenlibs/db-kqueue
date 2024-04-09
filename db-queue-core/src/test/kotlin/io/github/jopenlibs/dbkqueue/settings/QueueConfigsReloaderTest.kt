@@ -1,8 +1,8 @@
 package io.github.jopenlibs.dbkqueue.settings
 
 import io.github.jopenlibs.dbkqueue.config.QueueService
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.atLeast
 import org.mockito.kotlin.atLeastOnce
@@ -66,7 +66,7 @@ class QueueConfigsReloaderTest {
         private lateinit var tempDir: Path
 
         @JvmStatic
-        @BeforeClass
+        @BeforeAll
         @Throws(Exception::class)
         fun beforeClass() {
             tempDir = Files.createTempDirectory(

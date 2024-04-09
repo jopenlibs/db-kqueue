@@ -1,6 +1,5 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
-import io.github.jopenlibs.dbkqueue.api.QueueConsumer
 import io.github.jopenlibs.dbkqueue.api.Task
 import io.github.jopenlibs.dbkqueue.api.Task.Companion.builder
 import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult.Companion.finish
@@ -17,11 +16,14 @@ import io.github.jopenlibs.dbkqueue.stub.FakeMillisTimeProvider
 import io.github.jopenlibs.dbkqueue.stub.FakeQueueConsumer
 import io.github.jopenlibs.dbkqueue.stub.TestFixtures
 import kotlinx.coroutines.runBlocking
-import org.junit.Test
-import org.mockito.Mockito
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -31,11 +33,12 @@ import java.time.ZonedDateTime
  */
 class TaskProcessorTest {
     @Test
-    fun should_succesfully_process_task() = runBlocking {
+    fun should_succesfully_process_task(): Unit = runBlocking {
         val location = QueueLocation.builder().withTableName("testLocation")
             .withQueueId(QueueId("testQueue")).build()
         val taskRecord =
-            TaskRecord.builder().withCreatedAt(ofSeconds(1)).withNextProcessAt(ofSeconds(5)).withPayload("testPayload")
+            TaskRecord.builder().withCreatedAt(ofSeconds(1)).withNextProcessAt(ofSeconds(5))
+                .withPayload("testPayload")
                 .build()
         val shardId = QueueShardId("s1")
         val transformedPayload = "transformedPayload"
@@ -43,26 +46,29 @@ class TaskProcessorTest {
 
 
         val queueShard: QueueShard<DatabaseAccessLayer> = mock()
-        Mockito.`when`(queueShard.shardId).thenReturn(shardId)
-        val listener = Mockito.mock(TaskLifecycleListener::class.java)
-        val millisTimeProvider: MillisTimeProvider = Mockito.spy(FakeMillisTimeProvider(mutableListOf(3L, 5L)))
-        val resultHandler = Mockito.mock(TaskResultHandler::class.java)
+        whenever(queueShard.shardId).thenReturn(shardId)
+        val listener: TaskLifecycleListener = mock()
+        val millisTimeProvider: MillisTimeProvider = spy(FakeMillisTimeProvider(mutableListOf(3L, 5L)))
+        val resultHandler: TaskResultHandler = mock()
         val transformer: TaskPayloadTransformer<String> = mock()
 
-        Mockito.`when`(transformer.toObject(taskRecord.payload)).thenReturn(transformedPayload)
-        val queueConsumer: QueueConsumer<String?> = spy(FakeQueueConsumer(
+        whenever(transformer.toObject(taskRecord.payload)).thenReturn(transformedPayload)
+        val queueConsumer: FakeQueueConsumer = spy(FakeQueueConsumer(
             QueueConfig(
                 location,
                 TestFixtures.createQueueSettings().build()
             ),
             transformer
-        ) { r: Task<String>? -> queueResult }) as QueueConsumer<String?>
+        ) { r: Task<String>? -> queueResult })
 
-        TaskProcessor(queueShard, listener, millisTimeProvider, resultHandler).processTask(queueConsumer, taskRecord)
+        TaskProcessor(queueShard, listener, millisTimeProvider, resultHandler).processTask(
+            queueConsumer,
+            taskRecord
+        )
 
-        Mockito.verify(listener).started(shardId, location, taskRecord)
-        Mockito.verify(millisTimeProvider, Mockito.times(2)).millis
-        Mockito.verify(queueConsumer).execute(
+        verify(listener).started(shardId, location, taskRecord)
+        verify(millisTimeProvider, times(2)).millis
+        verify(queueConsumer).execute(
             builder<String>(shardId)
                 .withCreatedAt(taskRecord.createdAt)
                 .withPayload(transformedPayload)
@@ -71,33 +77,32 @@ class TaskProcessorTest {
                 .withTotalAttemptsCount(taskRecord.totalAttemptsCount)
                 .withExtData(emptyMap()).build()
         )
-        Mockito.verify(listener).executed(shardId, location, taskRecord, queueResult, 2)
-        Mockito.verify(resultHandler).handleResult(taskRecord, queueResult)
-        Mockito.verify(listener).finished(shardId, location, taskRecord)
+        verify(listener).executed(shardId, location, taskRecord, queueResult, 2)
+        verify(resultHandler).handleResult(taskRecord, queueResult)
+        verify(listener).finished(shardId, location, taskRecord)
     }
 
     @Test
-    fun should_handle_exception_when_queue_failed() = runBlocking {
+    fun should_handle_exception_when_queue_failed(): Unit = runBlocking {
         val location = QueueLocation.builder().withTableName("testLocation")
             .withQueueId(QueueId("testQueue")).build()
         val taskRecord =
-            TaskRecord.builder().withCreatedAt(ofSeconds(1)).withNextProcessAt(ofSeconds(5)).withPayload("testPayload")
+            TaskRecord.builder().withCreatedAt(ofSeconds(1)).withNextProcessAt(ofSeconds(5))
+                .withPayload("testPayload")
                 .build()
         val shardId = QueueShardId("s1")
         val queueException = RuntimeException("fail")
 
 
-        val queueShard = Mockito.mock(QueueShard::class.java)
-        Mockito.`when`(queueShard.shardId).thenReturn(shardId)
-        val listener = Mockito.mock(TaskLifecycleListener::class.java)
-        val millisTimeProvider = Mockito.mock(MillisTimeProvider::class.java)
-        val resultHandler = Mockito.mock(TaskResultHandler::class.java)
-        val transformer: TaskPayloadTransformer<String> = Mockito.mock(
-            TaskPayloadTransformer::class.java
-        ) as TaskPayloadTransformer<String>
+        val queueShard: QueueShard<*> = mock()
+        whenever(queueShard.shardId).thenReturn(shardId)
+        val listener: TaskLifecycleListener = mock()
+        val millisTimeProvider: MillisTimeProvider = mock()
+        val resultHandler: TaskResultHandler = mock()
+        val transformer: TaskPayloadTransformer<String> = mock()
 
-        Mockito.`when`(transformer.toObject(taskRecord.payload)).thenReturn(taskRecord.payload)
-        val queueConsumer: QueueConsumer<String?> = Mockito.spy(FakeQueueConsumer(
+        whenever(transformer.toObject(taskRecord.payload)).thenReturn(taskRecord.payload)
+        val queueConsumer: FakeQueueConsumer = spy(FakeQueueConsumer(
             QueueConfig(
                 location,
                 TestFixtures.createQueueSettings().build()
@@ -105,55 +110,60 @@ class TaskProcessorTest {
             transformer
         ) { r: Task<String>? ->
             throw queueException
-        }) as QueueConsumer<String?>
+        })
 
+        TaskProcessor(queueShard, listener, millisTimeProvider, resultHandler).processTask(
+            queueConsumer,
+            taskRecord
+        )
 
-        TaskProcessor(queueShard, listener, millisTimeProvider, resultHandler).processTask(queueConsumer, taskRecord)
-
-        Mockito.verify(listener).started(shardId, location, taskRecord)
-        Mockito.verify(queueConsumer).execute<Any>(any())
-        Mockito.verify(listener).crashed(shardId, location, taskRecord, queueException)
-        Mockito.verify(listener).finished(shardId, location, taskRecord)
+        verify(listener).started(shardId, location, taskRecord)
+        verify(queueConsumer).execute<Any>(any())
+        verify(listener).crashed(shardId, location, taskRecord, queueException)
+        verify(listener).finished(shardId, location, taskRecord)
     }
 
     @Test
-    fun should_handle_exception_when_result_handler_failed() = runBlocking {
+    fun should_handle_exception_when_result_handler_failed(): Unit = runBlocking {
         val location = QueueLocation.builder().withTableName("testLocation")
             .withQueueId(QueueId("testQueue")).build()
         val taskRecord =
-            TaskRecord.builder().withCreatedAt(ofSeconds(1)).withNextProcessAt(ofSeconds(5)).withPayload("testPayload")
+            TaskRecord.builder().withCreatedAt(ofSeconds(1)).withNextProcessAt(ofSeconds(5))
+                .withPayload("testPayload")
                 .build()
         val shardId = QueueShardId("s1")
         val handlerException = RuntimeException("fail")
         val queueResult = finish()
 
-        val queueShard = Mockito.mock(QueueShard::class.java)
-        Mockito.`when`(queueShard.shardId).thenReturn(shardId)
-        val listener = Mockito.mock(TaskLifecycleListener::class.java)
-        val millisTimeProvider = Mockito.mock(MillisTimeProvider::class.java)
-        val resultHandler = Mockito.mock(TaskResultHandler::class.java)
-        Mockito.doThrow(handlerException).`when`(resultHandler)
+        val queueShard: QueueShard<*> = mock()
+        whenever(queueShard.shardId).thenReturn(shardId)
+        val listener: TaskLifecycleListener = mock()
+        val millisTimeProvider: MillisTimeProvider = mock()
+        val resultHandler: TaskResultHandler = mock()
+        doThrow(handlerException).whenever(resultHandler)
             .handleResult(any(), any())
-        val transformer: TaskPayloadTransformer<String> = Mockito.mock(
-            TaskPayloadTransformer::class.java
-        ) as TaskPayloadTransformer<String>
-        Mockito.`when`(transformer.toObject(taskRecord.payload)).thenReturn(taskRecord.payload)
-        val queueConsumer: QueueConsumer<String?> = Mockito.spy(FakeQueueConsumer(
+
+        val transformer: TaskPayloadTransformer<String> = mock()
+        whenever(transformer.toObject(taskRecord.payload)).thenReturn(taskRecord.payload)
+        val queueConsumer: FakeQueueConsumer = spy(FakeQueueConsumer(
             QueueConfig(
                 location,
                 TestFixtures.createQueueSettings().build()
             ),
             transformer
-        ) { r: Task<String>? -> queueResult }) as QueueConsumer<String?>
+        ) { r: Task<String>? -> queueResult })
 
 
-        TaskProcessor(queueShard, listener, millisTimeProvider, resultHandler).processTask(queueConsumer, taskRecord)
+        TaskProcessor(queueShard, listener, millisTimeProvider, resultHandler).processTask(
+            queueConsumer,
+            taskRecord
+        )
 
-        Mockito.verify(listener).started(shardId, location, taskRecord)
-        Mockito.verify(queueConsumer).execute<Any>(any())
-        Mockito.verify(resultHandler).handleResult(taskRecord, queueResult)
-        Mockito.verify(listener).crashed(shardId, location, taskRecord, handlerException)
-        Mockito.verify(listener).finished(shardId, location, taskRecord)
+        verify(listener).started(shardId, location, taskRecord)
+        verify(queueConsumer).execute<Any>(any())
+        verify(resultHandler).handleResult(taskRecord, queueResult)
+        verify(listener).crashed(shardId, location, taskRecord, handlerException)
+        verify(listener).finished(shardId, location, taskRecord)
     }
 
 

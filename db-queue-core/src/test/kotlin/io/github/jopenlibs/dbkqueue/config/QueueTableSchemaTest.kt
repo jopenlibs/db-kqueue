@@ -1,8 +1,7 @@
 package io.github.jopenlibs.dbkqueue.config
 
-import org.hamcrest.CoreMatchers
-import org.junit.Assert
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 /**
  * @author Oleg Kandaurov
@@ -22,14 +21,14 @@ class QueueTableSchemaTest {
             .withTotalAttemptField("tat !@#$%^&*()_+-=1\n;'][{}")
             .withExtFields(listOf("tr !@#$%^&*()_+-=1\n;'][{}"))
             .build()
-        Assert.assertThat(schema.idField, CoreMatchers.equalTo("qid_1"))
-        Assert.assertThat(schema.queueNameField, CoreMatchers.equalTo("qn_1"))
-        Assert.assertThat(schema.payloadField, CoreMatchers.equalTo("pl_1"))
-        Assert.assertThat(schema.createdAtField, CoreMatchers.equalTo("ct_1"))
-        Assert.assertThat(schema.nextProcessAtField, CoreMatchers.equalTo("pt_1"))
-        Assert.assertThat(schema.attemptField, CoreMatchers.equalTo("at_1"))
-        Assert.assertThat(schema.reenqueueAttemptField, CoreMatchers.equalTo("rat_1"))
-        Assert.assertThat(schema.totalAttemptField, CoreMatchers.equalTo("tat_1"))
-        Assert.assertThat(schema.extFields[0], CoreMatchers.equalTo("tr_1"))
+        assertThat(schema.idField).isEqualTo("qid_1")
+        assertThat(schema.queueNameField).isEqualTo("qn_1")
+        assertThat(schema.payloadField).isEqualTo("pl_1")
+        assertThat(schema.createdAtField).isEqualTo("ct_1")
+        assertThat(schema.nextProcessAtField).isEqualTo("pt_1")
+        assertThat(schema.attemptField).isEqualTo("at_1")
+        assertThat(schema.reenqueueAttemptField).isEqualTo("rat_1")
+        assertThat(schema.totalAttemptField).isEqualTo("tat_1")
+        assertThat(schema.extFields[0]).isEqualTo("tr_1")
     }
 }

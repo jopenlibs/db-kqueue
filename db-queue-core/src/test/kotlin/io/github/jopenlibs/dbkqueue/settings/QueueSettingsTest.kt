@@ -1,7 +1,7 @@
 package io.github.jopenlibs.dbkqueue.settings
 
 import nl.jqno.equalsverifier.EqualsVerifier
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * @author Oleg Kandaurov
@@ -9,7 +9,6 @@ import org.junit.Test
  */
 class QueueSettingsTest {
     @Test
-    @Throws(Exception::class)
     fun should_define_correct_equals_hashcode() {
         EqualsVerifier.forClass(QueueSettings::class.java).verify()
     }

@@ -7,10 +7,8 @@ import io.github.jopenlibs.dbkqueue.config.QueueShardId
 import io.github.jopenlibs.dbkqueue.config.TaskLifecycleListener
 import io.github.jopenlibs.dbkqueue.settings.QueueId
 import io.github.jopenlibs.dbkqueue.settings.QueueLocation
-import org.hamcrest.CoreMatchers
-import org.junit.Assert
-import org.junit.Test
-import java.util.*
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 class CompositeTaskLifecycleListenerTest {
     @Test
@@ -27,13 +25,13 @@ class CompositeTaskLifecycleListenerTest {
                 events
             )
         val compositeListener = CompositeTaskLifecycleListener(
-            Arrays.asList(firstListener, secondListener)
+            listOf(firstListener, secondListener)
         )
         compositeListener.picked(
             SHARD_ID,
             LOCATION,
             TASK_RECORD, 42L)
-        Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("1:picked", "2:picked")))
+        assertThat<List<String>>(events).isEqualTo(mutableListOf("1:picked", "2:picked"))
     }
 
     @Test
@@ -50,14 +48,14 @@ class CompositeTaskLifecycleListenerTest {
                 events
             )
         val compositeListener = CompositeTaskLifecycleListener(
-            Arrays.asList(firstListener, secondListener)
+            listOf(firstListener, secondListener)
         )
         compositeListener.started(
             SHARD_ID,
             LOCATION,
             TASK_RECORD
         )
-        Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("1:started", "2:started")))
+        assertThat<List<String>>(events).isEqualTo(mutableListOf("1:started", "2:started"))
     }
 
     @Test
@@ -74,7 +72,7 @@ class CompositeTaskLifecycleListenerTest {
                 events
             )
         val compositeListener = CompositeTaskLifecycleListener(
-            Arrays.asList(firstListener, secondListener)
+            listOf(firstListener, secondListener)
         )
         compositeListener.executed(
             SHARD_ID,
@@ -83,7 +81,7 @@ class CompositeTaskLifecycleListenerTest {
             finish(),
             42L
         )
-        Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("2:executed", "1:executed")))
+        assertThat<List<String>>(events).isEqualTo(mutableListOf("2:executed", "1:executed"))
     }
 
     @Test
@@ -100,14 +98,15 @@ class CompositeTaskLifecycleListenerTest {
                 events
             )
         val compositeListener = CompositeTaskLifecycleListener(
-            Arrays.asList(firstListener, secondListener)
+            listOf(firstListener, secondListener)
         )
         compositeListener.finished(
             SHARD_ID,
             LOCATION,
             TASK_RECORD
         )
-        Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("2:finished", "1:finished")))
+
+        assertThat<List<String>>(events).isEqualTo(mutableListOf("2:finished", "1:finished"))
     }
 
     @Test
@@ -124,13 +123,14 @@ class CompositeTaskLifecycleListenerTest {
                 events
             )
         val compositeListener = CompositeTaskLifecycleListener(
-            Arrays.asList(firstListener, secondListener)
+            listOf(firstListener, secondListener)
         )
         compositeListener.crashed(
             SHARD_ID,
             LOCATION,
             TASK_RECORD, null)
-        Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("2:crashed", "1:crashed")))
+
+        assertThat<List<String>>(events).isEqualTo(mutableListOf("2:crashed", "1:crashed"))
     }
 
     class StubTaskLifecycleListener(

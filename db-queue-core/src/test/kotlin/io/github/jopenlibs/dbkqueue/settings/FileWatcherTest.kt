@@ -1,18 +1,16 @@
 package io.github.jopenlibs.dbkqueue.settings
 
-import org.hamcrest.CoreMatchers
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.test.assertTrue
 
 class FileWatcherTest {
     @Test
-    @Throws(Exception::class)
     fun should_watch_file_changes() {
         val tempDir = Files.createTempDirectory(
             Paths.get(System.getProperty("user.dir"), "build"),
@@ -49,6 +47,7 @@ class FileWatcherTest {
             Thread.sleep(100)
         }
         fileWatcher.stopWatch()
-        Assert.assertThat(fileHasChanged.get(), CoreMatchers.equalTo(true))
+
+        assertTrue(fileHasChanged.get())
     }
 }

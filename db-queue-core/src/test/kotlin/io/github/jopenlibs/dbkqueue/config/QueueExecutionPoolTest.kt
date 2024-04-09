@@ -35,27 +35,29 @@ import java.util.concurrent.TimeUnit
  */
 class QueueExecutionPoolTest {
     @Test
-    fun should_start() = runBlocking {
-        val queueConfig = QueueConfig(
-            QueueLocation.builder().withTableName("testTable")
-                .withQueueId(QueueId("queue1")).build(),
-            TestFixtures.createQueueSettings().withProcessingSettings(
-                TestFixtures.createProcessingSettings().withThreadCount(2).build()
+    fun should_start() {
+        runBlocking {
+            val queueConfig = QueueConfig(
+                QueueLocation.builder().withTableName("testTable")
+                    .withQueueId(QueueId("queue1")).build(),
+                TestFixtures.createQueueSettings().withProcessingSettings(
+                    TestFixtures.createProcessingSettings().withThreadCount(2).build()
+                )
+                    .build()
             )
-                .build()
-        )
-        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
-        val queueRunner: QueueRunner = mock()
-        val queueTaskPoller: QueueTaskPoller = mock()
-        val queueLoop: QueueLoop = mock()
-        val executor: ExecutorService = Mockito.spy(DirectExecutor())
-        val pool = QueueExecutionPool(
-            consumer as QueueConsumer<Any?>, DEFAULT_SHARD, queueTaskPoller, executor,
-            queueRunner
-        ) { queueLoop }
-        pool.start()
-        Mockito.verify(queueTaskPoller, Mockito.times(2)).start(queueLoop, DEFAULT_SHARD.shardId, consumer, queueRunner)
-        Mockito.verify(executor, Mockito.times(2)).submit(ArgumentMatchers.any(Runnable::class.java))
+            val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
+            val queueRunner: QueueRunner = mock()
+            val queueTaskPoller: QueueTaskPoller = mock()
+            val queueLoop: QueueLoop = mock()
+            val executor: ExecutorService = Mockito.spy(DirectExecutor())
+            val pool = QueueExecutionPool(
+                consumer as QueueConsumer<Any?>, DEFAULT_SHARD, queueTaskPoller, executor,
+                queueRunner
+            ) { queueLoop }
+            pool.start()
+            Mockito.verify(queueTaskPoller, Mockito.times(2)).start(queueLoop, DEFAULT_SHARD.shardId, consumer, queueRunner)
+            Mockito.verify(executor, Mockito.times(2)).submit(ArgumentMatchers.any(Runnable::class.java))
+        }
     }
 
     @Test

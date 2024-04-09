@@ -2,7 +2,7 @@ package io.github.jopenlibs.dbkqueue.api
 
 import nl.jqno.equalsverifier.EqualsVerifier
 import nl.jqno.equalsverifier.Warning
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * @author Oleg Kandaurov

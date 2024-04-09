@@ -4,8 +4,8 @@ import com.tngtech.archunit.core.domain.JavaClasses
 import com.tngtech.archunit.core.importer.ClassFileImporter
 import com.tngtech.archunit.core.importer.ImportOptions
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.stream.Collectors
 
@@ -16,7 +16,7 @@ import java.util.stream.Collectors
 class ArchitectureTest {
     private var classes: JavaClasses? = null
 
-    @Before
+    @BeforeEach
     fun importClasses() {
         classes = ClassFileImporter(ImportOptions())
             .importPackages(BASE_PACKAGE)

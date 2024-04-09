@@ -1,19 +1,15 @@
 package io.github.jopenlibs.dbkqueue.settings
 
-import org.hamcrest.CoreMatchers
-import org.hamcrest.MatcherAssert
-import org.junit.BeforeClass
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
-import java.io.IOException
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
 import java.time.Duration
 import java.util.*
-import java.util.function.Function
 import java.util.stream.Collectors
 
 /**
@@ -21,7 +17,6 @@ import java.util.stream.Collectors
  * @since 22.08.2017
  */
 class QueueConfigsReaderTest {
-    @Throws(IOException::class)
     fun write(vararg lines: String?): Path {
         val tempFile = Files.createTempFile(tempDir, "queue", ".properties")
         Files.write(tempFile, Arrays.asList(*lines), StandardOpenOption.WRITE, StandardOpenOption.APPEND)
@@ -56,10 +51,6 @@ class QueueConfigsReaderTest {
             })
     }
 
-    @JvmField
-    @Rule
-    var thrown: ExpectedException = ExpectedException.none()
-
     private fun createConfig(tableName: String, queueId: String, settings: QueueSettings): QueueConfig {
         return QueueConfig(
             QueueLocation.builder().withTableName(tableName)
@@ -68,7 +59,6 @@ class QueueConfigsReaderTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun should_read_simple_config() {
         val path = write(
             "q.testQueue.table=foo",
@@ -77,25 +67,21 @@ class QueueConfigsReaderTest {
         )
         val queueConfigsReader = createReader(path)
         val configs = queueConfigsReader.parse()
-        MatcherAssert.assertThat(
-            configs[0].location, CoreMatchers.equalTo(
-                QueueLocation.builder()
-                    .withQueueId(QueueId("testQueue")).withTableName("foo").build()
-            )
+
+        assertThat(configs[0].location).isEqualTo(
+            QueueLocation.builder()
+                .withQueueId(QueueId("testQueue")).withTableName("foo").build()
         )
-        MatcherAssert.assertThat(
-            configs[0].settings.pollSettings, CoreMatchers.equalTo(
-                PollSettings.builder()
-                    .withBetweenTaskTimeout(Duration.ofMillis(100L))
-                    .withNoTaskTimeout(Duration.ofSeconds(5L))
-                    .withFatalCrashTimeout(Duration.ofSeconds(999))
-                    .build()
-            )
+        assertThat(configs[0].settings.pollSettings).isEqualTo(
+            PollSettings.builder()
+                .withBetweenTaskTimeout(Duration.ofMillis(100L))
+                .withNoTaskTimeout(Duration.ofSeconds(5L))
+                .withFatalCrashTimeout(Duration.ofSeconds(999))
+                .build()
         )
     }
 
     @Test
-    @Throws(Exception::class)
     fun should_read_simple_config_with_id_sequence() {
         val path = write(
             "q.testQueue.table=foo",
@@ -103,11 +89,9 @@ class QueueConfigsReaderTest {
         )
         val queueConfigsReader = createReader(path)
         val configs = queueConfigsReader.parse()
-        MatcherAssert.assertThat(
-            configs[0].location, CoreMatchers.equalTo(
-                QueueLocation.builder().withTableName("foo")
-                    .withQueueId(QueueId("testQueue")).withIdSequence("sequence").build()
-            )
+        assertThat(configs[0].location).isEqualTo(
+            QueueLocation.builder().withTableName("foo")
+                .withQueueId(QueueId("testQueue")).withIdSequence("sequence").build()
         )
     }
 
@@ -133,88 +117,72 @@ class QueueConfigsReaderTest {
         )
         val queueConfigsReader = QueueConfigsReader(Arrays.asList(path), "q")
         val configs: Collection<QueueConfig> = queueConfigsReader.parse()
-        MatcherAssert.assertThat(
-            configs, CoreMatchers.equalTo(
-                listOf(
-                    createConfig(
-                        "foo", "testQueue",
-                        QueueSettings.builder()
-                            .withProcessingSettings(
-                                ProcessingSettings.builder()
-                                    .withThreadCount(3)
-                                    .withProcessingMode(ProcessingMode.USE_EXTERNAL_EXECUTOR)
-                                    .build()
-                            )
-                            .withPollSettings(
-                                PollSettings.builder()
-                                    .withBetweenTaskTimeout(Duration.ofMillis(100L))
-                                    .withNoTaskTimeout(Duration.ofSeconds(5L))
-                                    .withFatalCrashTimeout(Duration.ofHours(1))
-                                    .build()
-                            )
-                            .withFailureSettings(
-                                FailureSettings.builder()
-                                    .withRetryType(FailRetryType.LINEAR_BACKOFF)
-                                    .withRetryInterval(Duration.ofSeconds(30))
-                                    .build()
-                            )
-                            .withReenqueueSettings(
-                                ReenqueueSettings.builder()
-                                    .withRetryType(ReenqueueRetryType.FIXED)
-                                    .withFixedDelay(Duration.ofSeconds(5))
-                                    .withInitialDelay(Duration.ofMinutes(1))
-                                    .withGeometricRatio(1L)
-                                    .withArithmeticStep(Duration.ofSeconds(2))
-                                    .withSequentialPlan(Arrays.asList(Duration.ofSeconds(1), Duration.ofSeconds(2)))
-                                    .build()
-                            )
-                            .withExtSettings(
-                                ExtSettings.builder().withSettings(object : LinkedHashMap<String, String>() {
-                                    init {
-                                        put("custom", "val1")
-                                    }
-                                }).build()
-                            )
-                            .build()
-                    )
+        assertThat(configs).isEqualTo(
+            listOf(
+                createConfig(
+                    "foo", "testQueue",
+                    QueueSettings.builder()
+                        .withProcessingSettings(
+                            ProcessingSettings.builder()
+                                .withThreadCount(3)
+                                .withProcessingMode(ProcessingMode.USE_EXTERNAL_EXECUTOR)
+                                .build()
+                        )
+                        .withPollSettings(
+                            PollSettings.builder()
+                                .withBetweenTaskTimeout(Duration.ofMillis(100L))
+                                .withNoTaskTimeout(Duration.ofSeconds(5L))
+                                .withFatalCrashTimeout(Duration.ofHours(1))
+                                .build()
+                        )
+                        .withFailureSettings(
+                            FailureSettings.builder()
+                                .withRetryType(FailRetryType.LINEAR_BACKOFF)
+                                .withRetryInterval(Duration.ofSeconds(30))
+                                .build()
+                        )
+                        .withReenqueueSettings(
+                            ReenqueueSettings.builder()
+                                .withRetryType(ReenqueueRetryType.FIXED)
+                                .withFixedDelay(Duration.ofSeconds(5))
+                                .withInitialDelay(Duration.ofMinutes(1))
+                                .withGeometricRatio(1L)
+                                .withArithmeticStep(Duration.ofSeconds(2))
+                                .withSequentialPlan(Arrays.asList(Duration.ofSeconds(1), Duration.ofSeconds(2)))
+                                .build()
+                        )
+                        .withExtSettings(
+                            ExtSettings.builder().withSettings(object : LinkedHashMap<String, String>() {
+                                init {
+                                    put("custom", "val1")
+                                }
+                            }).build()
+                        )
+                        .build()
                 )
             )
         )
     }
 
     @Test
-    @Throws(Exception::class)
     fun should_not_parse_properties_in_bad_format() {
-        thrown.expect(IllegalArgumentException::class.java)
-        thrown.expectMessage(
-            CoreMatchers.equalTo(
-                "Cannot parse queue settings:" + System.lineSeparator() +
-                        "invalid format for setting name: setting=q.testQueue*.processing-mode"
-            )
-        )
         val path = write(
             "q.testQueue*.processing-mode=unknown-mode"
         )
         val queueConfigsReader = createReader(path)
-        queueConfigsReader.parse()
+
+        val err = assertThrows<IllegalArgumentException> {
+            queueConfigsReader.parse()
+        }
+        assertThat(err.message).isEqualTo(
+            "Cannot parse queue settings:" + System.lineSeparator() +
+                    "invalid format for setting name: setting=q.testQueue*.processing-mode"
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun should_fail_when_parse_errors() {
-        thrown.expect(IllegalArgumentException::class.java)
-        thrown.expectMessage(
-            CoreMatchers.equalTo(
-                "Cannot parse queue settings:" + System.lineSeparator() +
-                        "cannot parse setting: name=between-task-timeout, value=between-task, exception=DateTimeParseException(Text cannot be parsed to a Duration)" + System.lineSeparator() +
-                        "cannot parse setting: name=fatal-crash-timeout, value=fatal-crash, exception=DateTimeParseException(Text cannot be parsed to a Duration)" + System.lineSeparator() +
-                        "cannot parse setting: name=no-task-timeout, value=no-task, exception=DateTimeParseException(Text cannot be parsed to a Duration)" + System.lineSeparator() +
-                        "cannot parse setting: name=processing-mode, value=unknown-mode2, exception=IllegalArgumentException(unknown processing mode: name=unknown-mode2)" + System.lineSeparator() +
-                        "cannot parse setting: name=retry-interval, value=retry-interval, exception=DateTimeParseException(Text cannot be parsed to a Duration)" + System.lineSeparator() +
-                        "cannot parse setting: name=retry-type, value=unknown-retry-type, exception=IllegalArgumentException(unknown retry type: name=unknown-retry-type)" + System.lineSeparator() +
-                        "cannot parse setting: name=thread-count, value=count, exception=NumberFormatException(For input string: \"count\")"
-            )
-        )
         val path = write(
             "q.testQueue.table=foo",
             "q.testQueue.between-task-timeout=between-task",
@@ -227,41 +195,42 @@ class QueueConfigsReaderTest {
             "q.testQueue.processing-mode=unknown-mode2"
         )
         val queueConfigsReader = createReader(path)
-        queueConfigsReader.parse()
+
+        val err = assertThrows<IllegalArgumentException> {
+            queueConfigsReader.parse()
+        }
+        assertThat(err.message).isEqualTo(
+            "Cannot parse queue settings:" + System.lineSeparator() +
+                    "cannot parse setting: name=between-task-timeout, value=between-task, exception=DateTimeParseException(Text cannot be parsed to a Duration)" + System.lineSeparator() +
+                    "cannot parse setting: name=fatal-crash-timeout, value=fatal-crash, exception=DateTimeParseException(Text cannot be parsed to a Duration)" + System.lineSeparator() +
+                    "cannot parse setting: name=no-task-timeout, value=no-task, exception=DateTimeParseException(Text cannot be parsed to a Duration)" + System.lineSeparator() +
+                    "cannot parse setting: name=processing-mode, value=unknown-mode2, exception=IllegalArgumentException(unknown processing mode: name=unknown-mode2)" + System.lineSeparator() +
+                    "cannot parse setting: name=retry-interval, value=retry-interval, exception=DateTimeParseException(Text cannot be parsed to a Duration)" + System.lineSeparator() +
+                    "cannot parse setting: name=retry-type, value=unknown-retry-type, exception=IllegalArgumentException(unknown retry type: name=unknown-retry-type)" + System.lineSeparator() +
+                    "cannot parse setting: name=thread-count, value=count, exception=NumberFormatException(For input string: \"count\")"
+        )
     }
 
     @Test
     @Throws(Exception::class)
     fun should_fail_when_unknown_settings() {
-        thrown.expect(IllegalArgumentException::class.java)
-        thrown.expectMessage(
-            CoreMatchers.equalTo(
-                "Cannot parse queue settings:" + System.lineSeparator() +
-                        "unknown1 setting is unknown: queueId=testQueue"
-            )
-        )
         val path = write(
             "q.testQueue.table=foo",
             "q.testQueue.unknown1=unknown-val"
         )
 
-        val queueConfigsReader = QueueConfigsReader(Arrays.asList(path), "q")
-        queueConfigsReader.parse()
+        val queueConfigsReader = QueueConfigsReader(listOf(path), "q")
+        val err = assertThrows<IllegalArgumentException> {
+            queueConfigsReader.parse()
+        }
+        assertThat(err.message).isEqualTo(
+            "Cannot parse queue settings:" + System.lineSeparator() +
+                    "unknown1 setting is unknown: queueId=testQueue"
+        )
     }
 
     @Test
-    @Throws(Exception::class)
     fun should_fail_when_build_errors() {
-        thrown.expect(IllegalArgumentException::class.java)
-        thrown.expectMessage(
-            CoreMatchers.equalTo(
-                "Cannot parse queue settings:" + System.lineSeparator() +
-                        "cannot build failure settings: queueId=testQueue, msg=null" + System.lineSeparator() +
-                        "cannot build poll settings: queueId=testQueue, msg=null" + System.lineSeparator() +
-                        "cannot build processing settings: queueId=testQueue, msg=null" + System.lineSeparator() +
-                        "cannot build reenqueue settings: queueId=testQueue, msg=null"
-            )
-        )
         val path = write(
             "q.testQueue.table=foo",
             "q.testQueue.between-task-timeout=PT5S",
@@ -269,8 +238,17 @@ class QueueConfigsReaderTest {
             "q.testQueue.retry-type=geometric"
         )
 
-        val queueConfigsReader = QueueConfigsReader(Arrays.asList(path), "q")
-        queueConfigsReader.parse()
+        val queueConfigsReader = QueueConfigsReader(listOf(path), "q")
+        val err = assertThrows<IllegalArgumentException> {
+            queueConfigsReader.parse()
+        }
+        assertThat(err.message).isEqualTo(
+            "Cannot parse queue settings:" + System.lineSeparator() +
+                    "cannot build failure settings: queueId=testQueue, msg=null" + System.lineSeparator() +
+                    "cannot build poll settings: queueId=testQueue, msg=null" + System.lineSeparator() +
+                    "cannot build processing settings: queueId=testQueue, msg=null" + System.lineSeparator() +
+                    "cannot build reenqueue settings: queueId=testQueue, msg=null"
+        )
     }
 
     @Test
@@ -287,26 +265,24 @@ class QueueConfigsReaderTest {
             "q.testQueue.between-task-timeout=PT1S",
             "q.testQueue.no-task-timeout=PT10S"
         )
-        val queueConfigsReader = createReader(Arrays.asList(basePath, overridePath))
+        val queueConfigsReader = createReader(listOf(basePath, overridePath))
         val configs = queueConfigsReader.parse()
-        MatcherAssert.assertThat(
-            configs[0].settings.pollSettings, CoreMatchers.equalTo(
-                PollSettings.builder()
-                    .withBetweenTaskTimeout(Duration.ofSeconds(1L))
-                    .withNoTaskTimeout(Duration.ofSeconds(10L))
-                    .withFatalCrashTimeout(Duration.ofSeconds(2L)).build()
-            )
+        assertThat(configs[0].settings.pollSettings).isEqualTo(
+            PollSettings.builder()
+                .withBetweenTaskTimeout(Duration.ofSeconds(1L))
+                .withNoTaskTimeout(Duration.ofSeconds(10L))
+                .withFatalCrashTimeout(Duration.ofSeconds(2L)).build()
         )
     }
 
     @Test
     @Throws(Exception::class)
     fun should_check_file_existence() {
-        thrown.expect(IllegalArgumentException::class.java)
-        thrown.expectMessage("config path must be a file: files=[invalid]")
         val path = Paths.get("invalid")
-        val queueConfigsReader = createReader(path)
-        queueConfigsReader.parse()
+        val err = assertThrows<IllegalArgumentException> {
+            createReader(path)
+        }
+        assertThat(err.message).isEqualTo("config path must be a file: files=[invalid]")
     }
 
     @Test
@@ -330,23 +306,24 @@ class QueueConfigsReaderTest {
         )
         val queueConfigsReader = createReader(path)
         val configs: Collection<QueueConfig> = queueConfigsReader.parse()
-        MatcherAssert.assertThat(configs.stream().collect(
-            Collectors.toMap(
-                Function { config: QueueConfig -> config.location.queueId!!.asString() },
-                Function { config: QueueConfig -> config.settings.failureSettings!!.retryType })
-        ),
-            CoreMatchers.equalTo<Map<String, FailRetryType?>>(object : LinkedHashMap<String, FailRetryType>() {
+        assertThat(
+            configs.stream().collect(
+                Collectors.toMap(
+                    { config: QueueConfig -> config.location.queueId.asString() },
+                    { config: QueueConfig -> config.settings.failureSettings.retryType })
+            )
+        ).isEqualTo(
+            object : LinkedHashMap<String, FailRetryType>() {
                 init {
                     put("testQueue1", FailRetryType.GEOMETRIC_BACKOFF)
                     put("testQueue2", FailRetryType.ARITHMETIC_BACKOFF)
                     put("testQueue3", FailRetryType.LINEAR_BACKOFF)
                 }
-            })
+            }
         )
     }
 
     @Test
-    @Throws(Exception::class)
     fun should_parse_reenqueue_retry_types() {
         val path = write( // без явного указания reenqueue-retry-type
             "q.testQueue0.table=foo",
@@ -386,12 +363,14 @@ class QueueConfigsReaderTest {
         )
         val queueConfigsReader = createReader(path)
         val configs: Collection<QueueConfig> = queueConfigsReader.parse()
-        MatcherAssert.assertThat(configs.stream().collect(
-            Collectors.toMap(
-                Function { config: QueueConfig -> config.location.queueId!!.asString() },
-                Function { config: QueueConfig -> config.settings.reenqueueSettings })
-        ),
-            CoreMatchers.equalTo<Map<String, ReenqueueSettings?>>(object :
+        assertThat(
+            configs.stream().collect(
+                Collectors.toMap(
+                    { config: QueueConfig -> config.location.queueId.asString() },
+                    { config: QueueConfig -> config.settings.reenqueueSettings })
+            )
+        ).isEqualTo(
+            object :
                 LinkedHashMap<String, ReenqueueSettings>() {
                 init {
                     put(
@@ -410,7 +389,7 @@ class QueueConfigsReaderTest {
                     put(
                         "testQueue3", ReenqueueSettings.builder().withRetryType(ReenqueueRetryType.SEQUENTIAL)
                             .withSequentialPlan(
-                                Arrays.asList(
+                                listOf(
                                     Duration.ofSeconds(1L),
                                     Duration.ofSeconds(2L),
                                     Duration.ofSeconds(3L)
@@ -432,7 +411,6 @@ class QueueConfigsReaderTest {
                     )
                 }
             })
-        )
     }
 
     @Test
@@ -456,18 +434,20 @@ class QueueConfigsReaderTest {
         )
         val queueConfigsReader = createReader(path)
         val configs: Collection<QueueConfig> = queueConfigsReader.parse()
-        MatcherAssert.assertThat(configs.stream().collect(
-            Collectors.toMap(
-                Function { config: QueueConfig -> config.location.queueId!!.asString() },
-                Function { config: QueueConfig -> config.settings.processingSettings!!.processingMode })
-        ),
-            CoreMatchers.equalTo<Map<String, ProcessingMode?>>(object : LinkedHashMap<String, ProcessingMode>() {
+        assertThat(
+            configs.stream().collect(
+                Collectors.toMap(
+                    { config: QueueConfig -> config.location.queueId.asString() },
+                    { config: QueueConfig -> config.settings.processingSettings.processingMode })
+            )
+        ).isEqualTo(
+            object : LinkedHashMap<String, ProcessingMode>() {
                 init {
                     put("testQueue1", ProcessingMode.SEPARATE_TRANSACTIONS)
                     put("testQueue2", ProcessingMode.WRAP_IN_TRANSACTION)
                     put("testQueue3", ProcessingMode.USE_EXTERNAL_EXECUTOR)
                 }
-            })
+            }
         )
     }
 
@@ -475,9 +455,9 @@ class QueueConfigsReaderTest {
         private lateinit var tempDir: Path
 
         @JvmStatic
-        @BeforeClass
+        @BeforeAll
         @Throws(Exception::class)
-        fun beforeClass(): Unit {
+        fun beforeClass() {
             tempDir = Files.createTempDirectory(
                 Paths.get(System.getProperty("user.dir"), "build"),
                 QueueConfigsReaderTest::class.java.simpleName
