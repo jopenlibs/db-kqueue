@@ -2,9 +2,8 @@ package io.github.jopenlibs.dbkqueue.settings
 
 import nl.jqno.equalsverifier.EqualsVerifier
 import nl.jqno.equalsverifier.Warning
-import org.hamcrest.CoreMatchers
-import org.junit.Assert
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import java.util.*
 
 class ExtSettingsTest {
@@ -27,7 +26,8 @@ class ExtSettingsTest {
         val oldValue = ExtSettings.builder().withSettings(oldMap).build()
         val newValue = ExtSettings.builder().withSettings(newMap).build()
         val diff = oldValue.setValue(newValue)
-        Assert.assertThat(diff, CoreMatchers.equalTo(Optional.of("extSettings(same=2<1,new=3<null,old=null<0)")))
-        Assert.assertThat(oldValue, CoreMatchers.equalTo(newValue))
+
+        assertThat(diff).isEqualTo(Optional.of("extSettings(same=2<1,new=3<null,old=null<0)"))
+        assertThat(oldValue).isEqualTo(newValue)
     }
 }

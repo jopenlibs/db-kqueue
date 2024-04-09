@@ -2,7 +2,7 @@ package io.github.jopenlibs.dbkqueue.api
 
 import io.github.jopenlibs.dbkqueue.config.QueueShardId
 import nl.jqno.equalsverifier.EqualsVerifier
-import org.junit.Test
+import kotlin.test.Test
 
 /**
  * @author Oleg Kandaurov

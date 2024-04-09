@@ -12,11 +12,11 @@ import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
 import io.github.jopenlibs.dbkqueue.stub.TestFixtures
 import kotlinx.coroutines.runBlocking
-import org.hamcrest.CoreMatchers
-import org.junit.Assert
-import org.junit.Test
-import org.mockito.Mockito
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import java.time.Duration
 
@@ -26,8 +26,7 @@ import java.time.Duration
  */
 class QueueRunnerInTransactionTest {
     @Test
-    @Throws(Exception::class)
-    fun should_wait_notasktimeout_when_no_task_found() = runBlocking {
+    fun should_wait_notasktimeout_when_no_task_found(): Unit = runBlocking {
         val betweenTaskTimeout = Duration.ofHours(1L)
         val noTaskTimeout = Duration.ofMillis(5L)
 
@@ -50,29 +49,29 @@ class QueueRunnerInTransactionTest {
         )
         val status = QueueRunnerInTransaction(taskPicker, taskProcessor, queueShard).runQueue(queueConsumer)
 
-        Assert.assertThat(status, CoreMatchers.equalTo(QueueProcessingStatus.SKIPPED))
+        assertThat(status).isEqualTo(QueueProcessingStatus.SKIPPED)
 
-        Mockito.verify(queueShard).databaseAccessLayer
-        Mockito.verify(taskPicker).pickTask()
-        Mockito.verifyNoInteractions(taskProcessor)
+        verify(queueShard).databaseAccessLayer
+        verify(taskPicker).pickTask()
+        verifyNoInteractions(taskProcessor)
     }
 
     @Test
     @Throws(Exception::class)
-    fun should_wait_betweentasktimeout_when_task_found() = runBlocking {
+    fun should_wait_betweentasktimeout_when_task_found(): Unit = runBlocking {
         val betweenTaskTimeout = Duration.ofHours(1L)
         val noTaskTimeout = Duration.ofMillis(5L)
 
-        val queueConsumer = Mockito.mock(QueueConsumer::class.java) as QueueConsumer<Any?>
-        val taskPicker = Mockito.mock(TaskPicker::class.java)
+        val queueConsumer: QueueConsumer<Any?> = mock()
+        val taskPicker: TaskPicker = mock()
         val taskRecord = TaskRecord.builder().build()
-        Mockito.`when`(taskPicker.pickTask()).thenReturn(taskRecord)
-        val taskProcessor = Mockito.mock(TaskProcessor::class.java)
-        val queueShard = Mockito.mock(QueueShard::class.java)
-        Mockito.`when`(queueShard.databaseAccessLayer).thenReturn(StubDatabaseAccessLayer())
+        whenever(taskPicker.pickTask()).thenReturn(taskRecord)
+        val taskProcessor: TaskProcessor = mock()
+        val queueShard: QueueShard<*> = mock()
+        whenever(queueShard.databaseAccessLayer).thenReturn(StubDatabaseAccessLayer())
 
 
-        Mockito.`when`<Any>(queueConsumer.queueConfig).thenReturn(
+        whenever<Any>(queueConsumer.queueConfig).thenReturn(
             QueueConfig(
                 testLocation1,
                 TestFixtures.createQueueSettings().withPollSettings(
@@ -84,11 +83,11 @@ class QueueRunnerInTransactionTest {
         val queueProcessingStatus =
             QueueRunnerInTransaction(taskPicker, taskProcessor, queueShard).runQueue(queueConsumer)
 
-        Assert.assertThat(queueProcessingStatus, CoreMatchers.equalTo(QueueProcessingStatus.PROCESSED))
+        assertThat(queueProcessingStatus).isEqualTo(QueueProcessingStatus.PROCESSED)
 
-        Mockito.verify(queueShard).databaseAccessLayer
-        Mockito.verify(taskPicker).pickTask()
-        Mockito.verify(taskProcessor).processTask(queueConsumer, taskRecord)
+        verify(queueShard).databaseAccessLayer
+        verify(taskPicker).pickTask()
+        verify(taskProcessor).processTask(queueConsumer, taskRecord)
     }
 
     companion object {

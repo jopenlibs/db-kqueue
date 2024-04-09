@@ -5,8 +5,7 @@ import io.github.jopenlibs.dbkqueue.config.QueueShard
 import io.github.jopenlibs.dbkqueue.config.QueueShardId
 import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
 import org.assertj.core.api.Assertions.assertThat
-import org.hamcrest.CoreMatchers
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class SingleQueueShardRouterTest {
     @Test
@@ -16,6 +15,7 @@ class SingleQueueShardRouterTest {
             StubDatabaseAccessLayer()
         )
         val router = SingleQueueShardRouter<String, StubDatabaseAccessLayer>(main)
-        assertThat(router.resolveShard(EnqueueParams.create("1"))).isEqualTo(CoreMatchers.equalTo(main))
+
+        assertThat(router.resolveShard(EnqueueParams.create("1"))).isEqualTo(main)
     }
 }

@@ -11,9 +11,9 @@ import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import io.github.jopenlibs.dbkqueue.settings.ReenqueueRetryType
 import io.github.jopenlibs.dbkqueue.settings.ReenqueueSettings
 import kotlinx.coroutines.runBlocking
-import org.junit.Test
 import org.mockito.Mockito
 import java.time.Duration
+import kotlin.test.Test
 
 /**
  * @author Oleg Kandaurov

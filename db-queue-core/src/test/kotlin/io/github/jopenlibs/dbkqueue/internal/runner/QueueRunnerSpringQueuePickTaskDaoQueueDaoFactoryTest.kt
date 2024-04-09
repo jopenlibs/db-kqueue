@@ -6,7 +6,6 @@ import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult
 import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult.Companion.finish
 import io.github.jopenlibs.dbkqueue.config.QueueShard
 import io.github.jopenlibs.dbkqueue.config.QueueShardId
-import io.github.jopenlibs.dbkqueue.config.TaskLifecycleListener
 import io.github.jopenlibs.dbkqueue.internal.runner.QueueRunner.Factory.create
 import io.github.jopenlibs.dbkqueue.settings.ProcessingMode
 import io.github.jopenlibs.dbkqueue.settings.QueueConfig
@@ -15,10 +14,11 @@ import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import io.github.jopenlibs.dbkqueue.stub.StringQueueConsumer
 import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
 import io.github.jopenlibs.dbkqueue.stub.TestFixtures
-import org.hamcrest.CoreMatchers
-import org.junit.Assert
-import org.junit.Test
-import org.mockito.Mockito
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.*
 import java.util.concurrent.Executor
 
@@ -41,7 +41,6 @@ class QueueRunnerSpringQueuePickTaskDaoQueueDaoFactoryTest {
     }
 
     @Test
-    @Throws(Exception::class)
     fun should_return_external_executor_runner() {
         val settings = TestFixtures.createQueueSettings().withProcessingSettings(
             TestFixtures.createProcessingSettings().withProcessingMode(ProcessingMode.USE_EXTERNAL_EXECUTOR).build()
@@ -49,25 +48,20 @@ class QueueRunnerSpringQueuePickTaskDaoQueueDaoFactoryTest {
         val location = QueueLocation.builder().withTableName("testTable")
             .withQueueId(QueueId("testQueue")).build()
         val queueConsumer: QueueConsumer<*> = ConsumerWithExternalExecutor(
-            QueueConfig(location, settings), Mockito.mock(
-                Executor::class.java
-            )
+            QueueConfig(location, settings), mock()
         )
         val queueRunner = create(
             queueConsumer,
             QueueShard(QueueShardId("s1"), StubDatabaseAccessLayer()),
-            Mockito.mock(TaskLifecycleListener::class.java)
+            mock()
         )
 
-        Assert.assertThat(
-            queueRunner, CoreMatchers.instanceOf(
-                QueueRunnerInExternalExecutor::class.java
-            )
+        assertThat(queueRunner).isInstanceOf(
+            QueueRunnerInExternalExecutor::class.java
         )
     }
 
-    @Test(expected = IllegalArgumentException::class)
-    @Throws(Exception::class)
+    @Test
     fun should_throw_exception_when_no_external_executor_runner() {
         val settings = TestFixtures.createQueueSettings().withProcessingSettings(
             TestFixtures.createProcessingSettings().withProcessingMode(ProcessingMode.USE_EXTERNAL_EXECUTOR).build()
@@ -79,64 +73,55 @@ class QueueRunnerSpringQueuePickTaskDaoQueueDaoFactoryTest {
                 return finish()
             }
         }
-        val queueRunner = create(
-            queueConsumer,
-            QueueShard(QueueShardId("s1"), StubDatabaseAccessLayer()),
-            Mockito.mock(TaskLifecycleListener::class.java)
-        )
 
-        Assert.assertThat(
-            queueRunner, CoreMatchers.instanceOf(
-                QueueRunnerInExternalExecutor::class.java
+        assertThrows<IllegalArgumentException> {
+            create(
+                queueConsumer,
+                QueueShard(QueueShardId("s1"), StubDatabaseAccessLayer()),
+                mock()
             )
-        )
+        }
     }
 
     @Test
-    @Throws(Exception::class)
     fun should_return_separate_transactions_runner() {
-        val queueConsumer = Mockito.mock(QueueConsumer::class.java)
+        val queueConsumer: QueueConsumer<Any?> = mock()
         val settings = TestFixtures.createQueueSettings().withProcessingSettings(
             TestFixtures.createProcessingSettings().withProcessingMode(ProcessingMode.SEPARATE_TRANSACTIONS).build()
         ).build()
         val location = QueueLocation.builder().withTableName("testTable")
             .withQueueId(QueueId("testQueue")).build()
-        Mockito.`when`<Any>(queueConsumer.queueConfig).thenReturn(QueueConfig(location, settings))
+        whenever<Any>(queueConsumer.queueConfig).thenReturn(QueueConfig(location, settings))
 
         val queueRunner = create(
             queueConsumer,
             QueueShard(QueueShardId("s1"), StubDatabaseAccessLayer()),
-            Mockito.mock(TaskLifecycleListener::class.java)
+            mock()
         )
 
-        Assert.assertThat(
-            queueRunner, CoreMatchers.instanceOf(
-                QueueRunnerInSeparateTransactions::class.java
-            )
+        assertThat(queueRunner).isInstanceOf(
+            QueueRunnerInSeparateTransactions::class.java
         )
     }
 
     @Test
-    @Throws(Exception::class)
     fun should_return_wrap_in_transaction_runner() {
-        val queueConsumer = Mockito.mock(QueueConsumer::class.java)
+        val queueConsumer: QueueConsumer<Any?> = mock()
         val settings = TestFixtures.createQueueSettings().withProcessingSettings(
             TestFixtures.createProcessingSettings().withProcessingMode(ProcessingMode.WRAP_IN_TRANSACTION).build()
         ).build()
         val location = QueueLocation.builder().withTableName("testTable")
             .withQueueId(QueueId("testQueue")).build()
-        Mockito.`when`<Any>(queueConsumer.queueConfig).thenReturn(QueueConfig(location, settings))
+        whenever<Any>(queueConsumer.queueConfig).thenReturn(QueueConfig(location, settings))
 
         val queueRunner = create(
             queueConsumer,
             QueueShard(QueueShardId("s1"), StubDatabaseAccessLayer()),
-            Mockito.mock(TaskLifecycleListener::class.java)
+            mock()
         )
 
-        Assert.assertThat(
-            queueRunner, CoreMatchers.instanceOf(
-                QueueRunnerInTransaction::class.java
-            )
+        assertThat(queueRunner).isInstanceOf(
+            QueueRunnerInTransaction::class.java
         )
     }
 }

@@ -10,7 +10,7 @@ import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import io.github.jopenlibs.dbkqueue.stub.FakeMillisTimeProvider
 import io.github.jopenlibs.dbkqueue.stub.TestFixtures
 import kotlinx.coroutines.runBlocking
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
@@ -23,12 +23,11 @@ import java.time.Duration
  */
 class QueueTaskPollerTest {
     @Test
-    @Throws(Exception::class)
-    fun should_perform_success_lifecycle() = runBlocking {
+    fun should_perform_success_lifecycle(): Unit = runBlocking {
         val queueLoop: QueueLoop = Mockito.spy(SyncQueueLoop())
         val listener = Mockito.mock(ThreadLifecycleListener::class.java)
         val shardId = QueueShardId("s1")
-        val queueConsumer : QueueConsumer<Any?> = mock()
+        val queueConsumer: QueueConsumer<Any?> = mock()
         val location = QueueLocation.builder().withTableName("table")
             .withQueueId(QueueId("queue")).build()
         val waitDuration = Duration.ofMillis(100L)
@@ -57,10 +56,9 @@ class QueueTaskPollerTest {
         Mockito.verify(listener).finished(shardId, location)
     }
 
-
     @Test
     @Throws(Exception::class)
-    fun should_perform_crash_lifecycle() = runBlocking {
+    fun should_perform_crash_lifecycle(): Unit = runBlocking {
         val queueLoop: QueueLoop = Mockito.spy(SyncQueueLoop())
         val listener = Mockito.mock(ThreadLifecycleListener::class.java)
         val shardId = QueueShardId("s1")
