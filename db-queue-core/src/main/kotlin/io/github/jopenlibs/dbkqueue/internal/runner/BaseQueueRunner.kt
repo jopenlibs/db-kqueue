@@ -1,12 +1,12 @@
 package io.github.jopenlibs.dbkqueue.internal.runner
 
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.internal.processing.QueueProcessingStatus
+import io.github.jopenlibs.dbkqueue.internal.processing.TaskPicker
+import io.github.jopenlibs.dbkqueue.internal.processing.TaskProcessor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueProcessingStatus
-import ru.yoomoney.tech.dbqueue.internal.processing.TaskPicker
-import ru.yoomoney.tech.dbqueue.internal.processing.TaskProcessor
 import java.util.concurrent.Executor
 
 /**

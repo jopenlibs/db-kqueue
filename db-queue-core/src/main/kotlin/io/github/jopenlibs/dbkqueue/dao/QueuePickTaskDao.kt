@@ -1,6 +1,6 @@
 package io.github.jopenlibs.dbkqueue.dao
 
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
 
 /**
  * Database access object to pick up tasks in the queue.

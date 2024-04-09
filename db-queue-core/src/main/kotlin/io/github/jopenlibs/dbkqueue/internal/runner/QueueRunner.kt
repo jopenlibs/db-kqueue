@@ -1,14 +1,14 @@
 package io.github.jopenlibs.dbkqueue.internal.runner
 
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.config.QueueShard
-import ru.yoomoney.tech.dbqueue.config.TaskLifecycleListener
-import ru.yoomoney.tech.dbqueue.internal.processing.MillisTimeProvider.SystemMillisTimeProvider
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueProcessingStatus
-import ru.yoomoney.tech.dbqueue.internal.processing.TaskPicker
-import ru.yoomoney.tech.dbqueue.internal.processing.TaskProcessor
-import ru.yoomoney.tech.dbqueue.internal.processing.TaskResultHandler
-import ru.yoomoney.tech.dbqueue.settings.ProcessingMode
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.config.TaskLifecycleListener
+import io.github.jopenlibs.dbkqueue.internal.processing.MillisTimeProvider
+import io.github.jopenlibs.dbkqueue.internal.processing.QueueProcessingStatus
+import io.github.jopenlibs.dbkqueue.internal.processing.TaskPicker
+import io.github.jopenlibs.dbkqueue.internal.processing.TaskProcessor
+import io.github.jopenlibs.dbkqueue.internal.processing.TaskResultHandler
+import io.github.jopenlibs.dbkqueue.settings.ProcessingMode
 
 /**
  * Интерфейс обработчика пула задач очереди
@@ -52,7 +52,7 @@ interface QueueRunner {
 
             val taskPicker = TaskPicker(
                 queueShard, queueLocation, taskLifecycleListener,
-                SystemMillisTimeProvider(), queuePickTaskDao
+                MillisTimeProvider.SystemMillisTimeProvider(), queuePickTaskDao
             )
 
             val taskResultHandler = TaskResultHandler(
@@ -62,7 +62,7 @@ interface QueueRunner {
 
             val taskProcessor = TaskProcessor(
                 queueShard, taskLifecycleListener,
-                SystemMillisTimeProvider(), taskResultHandler
+                MillisTimeProvider.SystemMillisTimeProvider(), taskResultHandler
             )
 
             val processingMode = queueSettings.processingSettings.processingMode

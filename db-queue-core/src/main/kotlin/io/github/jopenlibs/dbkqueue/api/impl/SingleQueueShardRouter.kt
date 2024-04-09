@@ -1,9 +1,9 @@
 package io.github.jopenlibs.dbkqueue.api.impl
 
 import io.github.jopenlibs.dbkqueue.api.EnqueueParams
-import ru.yoomoney.tech.dbqueue.api.QueueShardRouter
-import ru.yoomoney.tech.dbqueue.config.DatabaseAccessLayer
-import ru.yoomoney.tech.dbqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.api.QueueShardRouter
+import io.github.jopenlibs.dbkqueue.config.DatabaseAccessLayer
+import io.github.jopenlibs.dbkqueue.config.QueueShard
 
 /**
  * Shard router without sharding. Might be helpful if you have single database instance.
@@ -16,7 +16,7 @@ import ru.yoomoney.tech.dbqueue.config.QueueShard
 class SingleQueueShardRouter<PayloadT, DatabaseAccessLayerT : DatabaseAccessLayer>
     (val queueShard: QueueShard<DatabaseAccessLayerT>) : QueueShardRouter<PayloadT, DatabaseAccessLayerT> {
 
-    override fun resolveShard(enqueueParams: io.github.jopenlibs.dbkqueue.api.EnqueueParams<PayloadT>): QueueShard<DatabaseAccessLayerT> {
+    override fun resolveShard(enqueueParams: EnqueueParams<PayloadT>): QueueShard<DatabaseAccessLayerT> {
         return queueShard
     }
 }

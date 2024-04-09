@@ -1,5 +1,6 @@
 package io.github.jopenlibs.dbkqueue.settings
 
+import io.github.jopenlibs.dbkqueue.config.QueueService
 import org.junit.BeforeClass
 import org.junit.Test
 import org.mockito.Mockito
@@ -9,7 +10,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
-import ru.yoomoney.tech.dbqueue.config.QueueService
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path

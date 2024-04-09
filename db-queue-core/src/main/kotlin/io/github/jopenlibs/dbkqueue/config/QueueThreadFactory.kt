@@ -1,8 +1,8 @@
 package io.github.jopenlibs.dbkqueue.config
 
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
 import java.util.concurrent.ThreadFactory
 import java.util.concurrent.atomic.AtomicLong
 

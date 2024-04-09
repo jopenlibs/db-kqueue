@@ -1,14 +1,14 @@
 package io.github.jopenlibs.dbkqueue.stub
 
+import io.github.jopenlibs.dbkqueue.config.DatabaseAccessLayer
+import io.github.jopenlibs.dbkqueue.config.DatabaseDialect
+import io.github.jopenlibs.dbkqueue.config.QueueTableSchema
+import io.github.jopenlibs.dbkqueue.dao.QueueDao
+import io.github.jopenlibs.dbkqueue.dao.QueuePickTaskDao
+import io.github.jopenlibs.dbkqueue.settings.FailureSettings
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import org.mockito.Mockito
 import org.mockito.kotlin.mock
-import ru.yoomoney.tech.dbqueue.config.DatabaseAccessLayer
-import ru.yoomoney.tech.dbqueue.config.DatabaseDialect
-import ru.yoomoney.tech.dbqueue.config.QueueTableSchema
-import ru.yoomoney.tech.dbqueue.dao.QueueDao
-import ru.yoomoney.tech.dbqueue.dao.QueuePickTaskDao
-import ru.yoomoney.tech.dbqueue.settings.FailureSettings
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
 
 class StubDatabaseAccessLayer : DatabaseAccessLayer {
     override val queueDao: QueueDao

@@ -1,7 +1,5 @@
 package io.github.jopenlibs.dbkqueue.settings
 
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-
 /**
  * Strategy for task processing in the queue.
  *

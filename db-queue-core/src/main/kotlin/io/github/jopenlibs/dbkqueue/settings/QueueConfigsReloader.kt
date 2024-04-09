@@ -1,8 +1,8 @@
 package io.github.jopenlibs.dbkqueue.settings
 
+import io.github.jopenlibs.dbkqueue.config.QueueService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ru.yoomoney.tech.dbqueue.config.QueueService
 import java.nio.file.Path
 import java.util.*
 import java.util.function.Consumer
@@ -31,7 +31,7 @@ class QueueConfigsReloader(
      */
     init {
         this.fileWatchers = queueConfigsReader.getConfigPaths().stream()
-            .map { path: Path -> FileWatcher(path, Runnable { this.reload() }) }
+            .map { path: Path -> FileWatcher(path, { this.reload() }) }
             .collect(Collectors.toList())
     }
 

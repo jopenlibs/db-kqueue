@@ -1,7 +1,6 @@
 package io.github.jopenlibs.dbkqueue.api
 
-import ru.yoomoney.tech.dbqueue.settings.ProcessingMode
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
 import java.util.*
 import java.util.concurrent.Executor
 

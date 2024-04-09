@@ -1,7 +1,7 @@
 package io.github.jopenlibs.dbkqueue.dao
 
 import io.github.jopenlibs.dbkqueue.api.EnqueueParams
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import java.time.Duration
 
 /**
@@ -18,7 +18,7 @@ interface QueueDao {
      * @param enqueueParams Parameters of the task
      * @return Identifier (sequence id) of new inserted task.
      */
-    suspend fun enqueue(location: QueueLocation, enqueueParams: io.github.jopenlibs.dbkqueue.api.EnqueueParams<String?>): Long
+    suspend fun enqueue(location: QueueLocation, enqueueParams: EnqueueParams<String?>): Long
 
     /**
      * Remove (delete) task from the queue.

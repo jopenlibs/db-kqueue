@@ -1,10 +1,9 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.config.ThreadLifecycleListener
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueLoop.WaitInterrupt
-import ru.yoomoney.tech.dbqueue.internal.runner.QueueRunner
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.config.ThreadLifecycleListener
+import io.github.jopenlibs.dbkqueue.internal.runner.QueueRunner
 
 /**
  * Цикл обработки задачи в очереди.
@@ -46,7 +45,7 @@ class QueueTaskPoller(
                     QueueProcessingStatus.SKIPPED -> {
                         queueLoop.doWait(
                             pollSettings.noTaskTimeout,
-                            WaitInterrupt.ALLOW
+                            QueueLoop.WaitInterrupt.ALLOW
                         )
                         return@doRun
                     }
@@ -54,7 +53,7 @@ class QueueTaskPoller(
                     QueueProcessingStatus.PROCESSED -> {
                         queueLoop.doWait(
                             pollSettings.betweenTaskTimeout,
-                            WaitInterrupt.DENY
+                            QueueLoop.WaitInterrupt.DENY
                         )
                         return@doRun
                     }
@@ -65,7 +64,7 @@ class QueueTaskPoller(
                 threadLifecycleListener.crashed(shardId, queueConsumer.queueConfig.location, e)
                 queueLoop.doWait(
                     pollSettings.fatalCrashTimeout,
-                    WaitInterrupt.DENY
+                    QueueLoop.WaitInterrupt.DENY
                 )
             } finally {
                 threadLifecycleListener.finished(shardId, queueConsumer.queueConfig.location)

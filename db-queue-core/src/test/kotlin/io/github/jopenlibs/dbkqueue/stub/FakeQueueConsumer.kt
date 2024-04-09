@@ -1,10 +1,10 @@
 package io.github.jopenlibs.dbkqueue.stub
 
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.api.Task
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult
-import ru.yoomoney.tech.dbqueue.api.TaskPayloadTransformer
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.api.Task
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult
+import io.github.jopenlibs.dbkqueue.api.TaskPayloadTransformer
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
 import java.util.function.Function
 
 /**

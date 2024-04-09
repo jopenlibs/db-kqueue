@@ -1,8 +1,8 @@
 package io.github.jopenlibs.dbkqueue.config.impl
 
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.config.ThreadLifecycleListener
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.config.ThreadLifecycleListener
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import java.util.*
 import java.util.function.Consumer
 

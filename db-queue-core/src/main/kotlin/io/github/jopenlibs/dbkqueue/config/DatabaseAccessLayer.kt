@@ -1,9 +1,9 @@
 package io.github.jopenlibs.dbkqueue.config
 
-import ru.yoomoney.tech.dbqueue.dao.QueueDao
-import ru.yoomoney.tech.dbqueue.dao.QueuePickTaskDao
-import ru.yoomoney.tech.dbqueue.settings.FailureSettings
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.dao.QueueDao
+import io.github.jopenlibs.dbkqueue.dao.QueuePickTaskDao
+import io.github.jopenlibs.dbkqueue.settings.FailureSettings
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 
 /**
  * Interface for interacting with database

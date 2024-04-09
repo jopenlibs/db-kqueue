@@ -1,6 +1,6 @@
 package io.github.jopenlibs.dbkqueue.stub
 
-import ru.yoomoney.tech.dbqueue.internal.processing.MillisTimeProvider
+import io.github.jopenlibs.dbkqueue.internal.processing.MillisTimeProvider
 
 /**
  * @author Oleg Kandaurov

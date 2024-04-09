@@ -1,12 +1,12 @@
 package io.github.jopenlibs.dbkqueue.config.impl
 
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.config.TaskLifecycleListener
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.config.TaskLifecycleListener
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
 import java.time.Clock
 import java.time.Duration
 import java.time.ZonedDateTime

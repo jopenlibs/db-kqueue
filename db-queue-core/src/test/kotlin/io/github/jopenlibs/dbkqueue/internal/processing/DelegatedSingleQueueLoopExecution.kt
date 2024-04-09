@@ -1,6 +1,5 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueLoop.WaitInterrupt
 import java.time.Duration
 
 class DelegatedSingleQueueLoopExecution internal constructor(private val delegate: QueueLoop) : QueueLoop {
@@ -21,7 +20,7 @@ class DelegatedSingleQueueLoopExecution internal constructor(private val delegat
         delegate.doContinue()
     }
 
-    override fun doWait(timeout: Duration?, waitInterrupt: WaitInterrupt) {
+    override fun doWait(timeout: Duration?, waitInterrupt: QueueLoop.WaitInterrupt) {
         delegate.doWait(timeout, waitInterrupt)
     }
 

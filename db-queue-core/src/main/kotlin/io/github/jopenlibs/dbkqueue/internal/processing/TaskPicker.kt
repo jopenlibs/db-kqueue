@@ -1,10 +1,10 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.config.QueueShard
-import ru.yoomoney.tech.dbqueue.config.TaskLifecycleListener
-import ru.yoomoney.tech.dbqueue.dao.QueuePickTaskDao
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.config.TaskLifecycleListener
+import io.github.jopenlibs.dbkqueue.dao.QueuePickTaskDao
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 
 /**
  * Класс, обеспечивающий выборку задачи из очереди

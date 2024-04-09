@@ -1,17 +1,16 @@
 package io.github.jopenlibs.dbkqueue.config
 
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.internal.processing.MillisTimeProvider
+import io.github.jopenlibs.dbkqueue.internal.processing.QueueLoop
+import io.github.jopenlibs.dbkqueue.internal.processing.QueueTaskPoller
+import io.github.jopenlibs.dbkqueue.internal.runner.QueueRunner
+import io.github.jopenlibs.dbkqueue.settings.ProcessingSettings
+import io.github.jopenlibs.dbkqueue.settings.QueueId
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.internal.processing.MillisTimeProvider.SystemMillisTimeProvider
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueLoop
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueLoop.WakeupQueueLoop
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueTaskPoller
-import ru.yoomoney.tech.dbqueue.internal.runner.QueueRunner
-import ru.yoomoney.tech.dbqueue.settings.ProcessingSettings
-import ru.yoomoney.tech.dbqueue.settings.QueueConfigsReader
-import ru.yoomoney.tech.dbqueue.settings.QueueId
+
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -48,7 +47,7 @@ internal class QueueExecutionPool(
     ) : this(queueConsumer, queueShard,
         QueueTaskPoller(
             threadLifecycleListener,
-            SystemMillisTimeProvider()
+            MillisTimeProvider.SystemMillisTimeProvider()
         ),
         ThreadPoolExecutor(
             queueConsumer.queueConfig.settings.processingSettings.threadCount,
@@ -60,7 +59,7 @@ internal class QueueExecutionPool(
             )
         ),
         QueueRunner.Factory.create(queueConsumer, queueShard, taskLifecycleListener),
-        Supplier<QueueLoop> { WakeupQueueLoop() })
+        Supplier<QueueLoop> { QueueLoop.WakeupQueueLoop() })
 
     init {
         queueConsumer.queueConfig.settings.processingSettings.registerObserver { oldValue: ProcessingSettings?, newValue: ProcessingSettings ->

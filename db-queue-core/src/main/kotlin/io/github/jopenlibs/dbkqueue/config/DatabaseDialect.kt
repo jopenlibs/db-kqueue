@@ -1,7 +1,5 @@
 package io.github.jopenlibs.dbkqueue.config
 
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
-
 /**
  * Supported database type (dialect)
  *

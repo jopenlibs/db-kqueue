@@ -1,20 +1,22 @@
 package io.github.jopenlibs.dbkqueue.internal.runner
 
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.internal.processing.QueueProcessingStatus
+import io.github.jopenlibs.dbkqueue.internal.processing.TaskPicker
+import io.github.jopenlibs.dbkqueue.internal.processing.TaskProcessor
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.settings.QueueId
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.stub.TestFixtures
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueProcessingStatus
-import ru.yoomoney.tech.dbqueue.internal.processing.TaskPicker
-import ru.yoomoney.tech.dbqueue.internal.processing.TaskProcessor
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
-import ru.yoomoney.tech.dbqueue.settings.QueueId
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
-import ru.yoomoney.tech.dbqueue.stub.TestFixtures
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.time.Duration
 import java.util.concurrent.Executor
 
@@ -30,12 +32,13 @@ class QueueRunnerInExternalExecutorTest {
         val noTaskTimeout = Duration.ofMillis(5L)
 
         val executor = Mockito.spy(FakeExecutor())
-        val queueConsumer = Mockito.mock(QueueConsumer::class.java) as QueueConsumer<Any?>
-        val taskPicker = Mockito.mock(TaskPicker::class.java)
-        Mockito.`when`(taskPicker.pickTask()).thenReturn(null)
-        val taskProcessor = Mockito.mock(TaskProcessor::class.java)
+        val queueConsumer: QueueConsumer<Any?> = mock()
+        val taskPicker: TaskPicker = mock()
+        val taskProcessor: TaskProcessor = mock()
 
-        Mockito.`when`<Any>(queueConsumer.queueConfig).thenReturn(
+        whenever(taskPicker.pickTask()).thenReturn(null)
+
+        whenever<Any>(queueConsumer.queueConfig).thenReturn(
             QueueConfig(
                 testLocation1,
                 TestFixtures.createQueueSettings().withPollSettings(

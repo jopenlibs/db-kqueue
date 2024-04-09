@@ -1,12 +1,12 @@
 package io.github.jopenlibs.dbkqueue.api.impl
 
 import io.github.jopenlibs.dbkqueue.api.EnqueueParams
-import ru.yoomoney.tech.dbqueue.api.EnqueueResult
-import ru.yoomoney.tech.dbqueue.api.QueueProducer
-import ru.yoomoney.tech.dbqueue.api.QueueShardRouter
-import ru.yoomoney.tech.dbqueue.api.TaskPayloadTransformer
-import ru.yoomoney.tech.dbqueue.config.DatabaseAccessLayer
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.api.EnqueueResult
+import io.github.jopenlibs.dbkqueue.api.QueueProducer
+import io.github.jopenlibs.dbkqueue.api.QueueShardRouter
+import io.github.jopenlibs.dbkqueue.api.TaskPayloadTransformer
+import io.github.jopenlibs.dbkqueue.config.DatabaseAccessLayer
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
 
 /**
  * Wrapper for queue producer wrapper with sharding support.
@@ -23,9 +23,9 @@ class ShardingQueueProducer<PayloadTaskT, DatabaseAccessLayerT : DatabaseAccessL
     private val queueShardRouter: QueueShardRouter<PayloadTaskT, DatabaseAccessLayerT>
 ) : QueueProducer<PayloadTaskT> {
 
-    override suspend fun enqueue(enqueueParams: io.github.jopenlibs.dbkqueue.api.EnqueueParams<PayloadTaskT>): EnqueueResult {
+    override suspend fun enqueue(enqueueParams: EnqueueParams<PayloadTaskT>): EnqueueResult {
         val queueShard = queueShardRouter.resolveShard(enqueueParams)
-        val rawEnqueueParams = io.github.jopenlibs.dbkqueue.api.EnqueueParams<String?>()
+        val rawEnqueueParams = EnqueueParams<String?>()
             .withPayload(payloadTransformer.fromObject(enqueueParams.payload))
             .withExecutionDelay(enqueueParams.executionDelay)
             .withExtData(enqueueParams.getExtData())

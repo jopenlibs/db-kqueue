@@ -2,6 +2,7 @@ package io.github.jopenlibs.dbkqueue.api
 
 import java.time.ZonedDateTime
 import java.util.*
+import kotlin.collections.LinkedHashMap
 
 /**
  * Raw database record with task parameters and payload

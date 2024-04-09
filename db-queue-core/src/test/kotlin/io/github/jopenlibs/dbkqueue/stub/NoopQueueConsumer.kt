@@ -1,9 +1,9 @@
 package io.github.jopenlibs.dbkqueue.stub
 
-import ru.yoomoney.tech.dbqueue.api.Task
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult.Companion.finish
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.api.Task
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult.Companion.finish
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
 
 /**
  * @author Oleg Kandaurov

@@ -1,7 +1,7 @@
 package io.github.jopenlibs.dbkqueue.api
 
-import ru.yoomoney.tech.dbqueue.config.DatabaseAccessLayer
-import ru.yoomoney.tech.dbqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.config.DatabaseAccessLayer
+import io.github.jopenlibs.dbkqueue.config.QueueShard
 
 /**
  * Dispatcher for sharding support.
@@ -21,5 +21,5 @@ interface QueueShardRouter<PayloadT, DatabaseAccessLayerT : DatabaseAccessLayer>
      * @param enqueueParams Parameters with typed payload to enqueue the task
      * @return Shard where task will be processed on
      */
-    fun resolveShard(enqueueParams: io.github.jopenlibs.dbkqueue.api.EnqueueParams<PayloadT>): QueueShard<DatabaseAccessLayerT>
+    fun resolveShard(enqueueParams: EnqueueParams<PayloadT>): QueueShard<DatabaseAccessLayerT>
 }

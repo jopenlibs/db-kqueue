@@ -4,13 +4,13 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.settings.QueueId
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.settings.QueueId
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
 
 class LoggingThreadLifecycleListenerTest {
     private lateinit var listAppender: ListAppender<ILoggingEvent>

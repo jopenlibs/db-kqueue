@@ -1,6 +1,6 @@
 package io.github.jopenlibs.dbkqueue.api
 
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
 import java.util.*
 
 /**

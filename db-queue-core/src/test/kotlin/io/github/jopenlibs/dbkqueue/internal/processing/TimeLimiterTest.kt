@@ -1,8 +1,8 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
+import io.github.jopenlibs.dbkqueue.stub.FakeMillisTimeProvider
 import org.junit.Assert
 import org.junit.Test
-import ru.yoomoney.tech.dbqueue.stub.FakeMillisTimeProvider
 import java.time.Duration
 import java.util.concurrent.atomic.AtomicInteger
 

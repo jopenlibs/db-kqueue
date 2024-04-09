@@ -1,10 +1,10 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.api.Task
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.config.QueueShard
-import ru.yoomoney.tech.dbqueue.config.TaskLifecycleListener
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.api.Task
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.config.TaskLifecycleListener
 
 /**
  * Обработчик выбранной задачи

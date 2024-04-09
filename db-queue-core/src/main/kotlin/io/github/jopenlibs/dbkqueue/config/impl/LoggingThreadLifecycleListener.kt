@@ -1,10 +1,10 @@
 package io.github.jopenlibs.dbkqueue.config.impl
 
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.config.ThreadLifecycleListener
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.config.ThreadLifecycleListener
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
 
 /**
  * Thread listener with logging support
@@ -32,7 +32,7 @@ class LoggingThreadLifecycleListener : ThreadLifecycleListener {
         exc: Throwable?
     ) {
         log.error(
-            "fatal error in queue thread: shardId={}, location={}", shardId!!.asString(),
+            "fatal error in queue thread: shardId={}, location={}", shardId.asString(),
             location, exc
         )
     }

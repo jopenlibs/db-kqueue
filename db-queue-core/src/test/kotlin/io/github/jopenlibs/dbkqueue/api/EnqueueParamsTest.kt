@@ -12,6 +12,6 @@ class EnqueueParamsTest {
     @Test
     @Throws(Exception::class)
     fun should_define_correct_equals_hashcode() {
-        EqualsVerifier.forClass(io.github.jopenlibs.dbkqueue.api.EnqueueParams::class.java).suppress(Warning.NONFINAL_FIELDS).verify()
+        EqualsVerifier.forClass(EnqueueParams::class.java).suppress(Warning.NONFINAL_FIELDS).verify()
     }
 }

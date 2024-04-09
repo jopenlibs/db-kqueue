@@ -1,8 +1,8 @@
 package io.github.jopenlibs.dbkqueue.config
 
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 
 /**
  * Listener for task processing lifecycle.

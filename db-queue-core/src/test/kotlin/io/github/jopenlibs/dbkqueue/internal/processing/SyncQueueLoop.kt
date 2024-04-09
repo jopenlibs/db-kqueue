@@ -1,6 +1,5 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueLoop.WaitInterrupt
 import java.time.Duration
 
 class SyncQueueLoop : QueueLoop {
@@ -11,7 +10,7 @@ class SyncQueueLoop : QueueLoop {
     override fun doContinue() {
     }
 
-    override fun doWait(timeout: Duration?, waitInterrupt: WaitInterrupt) {
+    override fun doWait(timeout: Duration?, waitInterrupt: QueueLoop.WaitInterrupt) {
     }
 
     override val isPaused: Boolean

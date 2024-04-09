@@ -1,26 +1,25 @@
 package io.github.jopenlibs.dbkqueue.api.impl
 
+import io.github.jopenlibs.dbkqueue.api.EnqueueResult
+import io.github.jopenlibs.dbkqueue.api.QueueShardRouter
+import io.github.jopenlibs.dbkqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.settings.QueueId
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
+import io.github.jopenlibs.dbkqueue.stub.TestFixtures
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
-import io.github.jopenlibs.dbkqueue.api.EnqueueParams
-import ru.yoomoney.tech.dbqueue.api.EnqueueResult
-import ru.yoomoney.tech.dbqueue.api.QueueShardRouter
-import ru.yoomoney.tech.dbqueue.config.QueueShard
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
-import ru.yoomoney.tech.dbqueue.settings.QueueId
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
-import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
-import ru.yoomoney.tech.dbqueue.stub.TestFixtures
 
 class ShardingQueueProducerTest {
     @Test
     fun should_insert_task_on_designated_shard() = runBlocking {
-        val stubDatabaseAccessLayer = io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer()
+        val stubDatabaseAccessLayer = StubDatabaseAccessLayer()
         val firstShard = QueueShard(
             QueueShardId("first"),
             stubDatabaseAccessLayer
@@ -49,7 +48,7 @@ class ShardingQueueProducerTest {
             )
         ).doReturn(22L)
 
-        val queueProducer: ShardingQueueProducer<String, io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer> =
+        val queueProducer: ShardingQueueProducer<String, StubDatabaseAccessLayer> =
             ShardingQueueProducer(
                 queueConfig, NoopPayloadTransformer.instance, StubQueueShardRouter(firstShard, secondShard)
             )
@@ -72,10 +71,10 @@ class ShardingQueueProducerTest {
     }
 
     private class StubQueueShardRouter(
-        private val firstShard: QueueShard<io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer>,
-        private val secondShard: QueueShard<io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer>
-    ) : QueueShardRouter<String, io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer> {
-        override fun resolveShard(enqueueParams: io.github.jopenlibs.dbkqueue.api.EnqueueParams<String>): QueueShard<io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer> {
+        private val firstShard: QueueShard<StubDatabaseAccessLayer>,
+        private val secondShard: QueueShard<StubDatabaseAccessLayer>
+    ) : QueueShardRouter<String, StubDatabaseAccessLayer> {
+        override fun resolveShard(enqueueParams: io.github.jopenlibs.dbkqueue.api.EnqueueParams<String>): QueueShard<StubDatabaseAccessLayer> {
             if (enqueueParams.payload == "1") {
                 return firstShard
             } else if (enqueueParams.payload == "2") {

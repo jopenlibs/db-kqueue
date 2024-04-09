@@ -1,24 +1,24 @@
 package io.github.jopenlibs.dbkqueue.internal.runner
 
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.api.Task
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult.Companion.finish
+import io.github.jopenlibs.dbkqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.config.TaskLifecycleListener
+import io.github.jopenlibs.dbkqueue.internal.runner.QueueRunner.Factory.create
+import io.github.jopenlibs.dbkqueue.settings.ProcessingMode
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.settings.QueueId
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.stub.StringQueueConsumer
+import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
+import io.github.jopenlibs.dbkqueue.stub.TestFixtures
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.api.Task
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult.Companion.finish
-import ru.yoomoney.tech.dbqueue.config.QueueShard
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.config.TaskLifecycleListener
-import ru.yoomoney.tech.dbqueue.internal.runner.QueueRunner.Factory.create
-import ru.yoomoney.tech.dbqueue.settings.ProcessingMode
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
-import ru.yoomoney.tech.dbqueue.settings.QueueId
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
-import ru.yoomoney.tech.dbqueue.stub.StringQueueConsumer
-import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
-import ru.yoomoney.tech.dbqueue.stub.TestFixtures
 import java.util.*
 import java.util.concurrent.Executor
 
@@ -55,7 +55,7 @@ class QueueRunnerSpringQueuePickTaskDaoQueueDaoFactoryTest {
         )
         val queueRunner = create(
             queueConsumer,
-            QueueShard(QueueShardId("s1"), io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer()),
+            QueueShard(QueueShardId("s1"), StubDatabaseAccessLayer()),
             Mockito.mock(TaskLifecycleListener::class.java)
         )
 
@@ -81,7 +81,7 @@ class QueueRunnerSpringQueuePickTaskDaoQueueDaoFactoryTest {
         }
         val queueRunner = create(
             queueConsumer,
-            QueueShard(QueueShardId("s1"), io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer()),
+            QueueShard(QueueShardId("s1"), StubDatabaseAccessLayer()),
             Mockito.mock(TaskLifecycleListener::class.java)
         )
 
@@ -105,7 +105,7 @@ class QueueRunnerSpringQueuePickTaskDaoQueueDaoFactoryTest {
 
         val queueRunner = create(
             queueConsumer,
-            QueueShard(QueueShardId("s1"), io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer()),
+            QueueShard(QueueShardId("s1"), StubDatabaseAccessLayer()),
             Mockito.mock(TaskLifecycleListener::class.java)
         )
 
@@ -129,7 +129,7 @@ class QueueRunnerSpringQueuePickTaskDaoQueueDaoFactoryTest {
 
         val queueRunner = create(
             queueConsumer,
-            QueueShard(QueueShardId("s1"), io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer()),
+            QueueShard(QueueShardId("s1"), StubDatabaseAccessLayer()),
             Mockito.mock(TaskLifecycleListener::class.java)
         )
 

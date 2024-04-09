@@ -36,14 +36,14 @@ class FailureSettings private constructor(
         this.retryInterval = Objects.requireNonNull(retryInterval, "retryInterval must not be null")
     }
 
-    override fun equals(obj: Any?): Boolean {
-        if (this === obj) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
             return true
         }
-        if (obj == null || javaClass != obj.javaClass) {
+        if (other == null || javaClass != other.javaClass) {
             return false
         }
-        val that = obj as FailureSettings
+        val that = other as FailureSettings
         return retryType == that.retryType && retryInterval == that.retryInterval
     }
 

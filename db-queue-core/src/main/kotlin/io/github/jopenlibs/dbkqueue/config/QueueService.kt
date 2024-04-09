@@ -1,17 +1,12 @@
 package io.github.jopenlibs.dbkqueue.config
 
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.internal.processing.MillisTimeProvider
+import io.github.jopenlibs.dbkqueue.internal.processing.TimeLimiter
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.settings.QueueId
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.internal.processing.MillisTimeProvider.SystemMillisTimeProvider
-import ru.yoomoney.tech.dbqueue.internal.processing.TimeLimiter
-import ru.yoomoney.tech.dbqueue.settings.FailureSettings
-import ru.yoomoney.tech.dbqueue.settings.PollSettings
-import ru.yoomoney.tech.dbqueue.settings.ProcessingSettings
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
-import ru.yoomoney.tech.dbqueue.settings.QueueConfigsReader
-import ru.yoomoney.tech.dbqueue.settings.QueueId
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueSettings
 import java.time.Duration
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -299,7 +294,7 @@ class QueueService internal constructor(
     fun awaitTermination(timeout: Duration): List<QueueId> {
         Objects.requireNonNull(timeout, "timeout")
         log.info("awaiting all queues termination: timeout={}", timeout)
-        val timeLimiter = TimeLimiter(SystemMillisTimeProvider(), timeout)
+        val timeLimiter = TimeLimiter(MillisTimeProvider.SystemMillisTimeProvider(), timeout)
         registeredQueues.keys.forEach(Consumer { queueId: QueueId ->
             timeLimiter.execute { remainingTimeout: Duration ->
                 awaitTermination(
@@ -324,7 +319,7 @@ class QueueService internal constructor(
     @Synchronized
     fun awaitTermination(queueId: QueueId, timeout: Duration): List<QueueShardId?> {
         log.info("awaiting queue termination: queueId={}, timeout={}", queueId, timeout)
-        val timeLimiter = TimeLimiter(SystemMillisTimeProvider(), timeout)
+        val timeLimiter = TimeLimiter(MillisTimeProvider.SystemMillisTimeProvider(), timeout)
         getQueuePools(queueId, "awaitTermination").values
             .forEach(Consumer { queueExecutionPool: QueueExecutionPool ->
                 timeLimiter.execute { timeout: Duration ->

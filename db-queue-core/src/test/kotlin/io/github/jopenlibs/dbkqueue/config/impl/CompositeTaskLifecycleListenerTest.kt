@@ -1,15 +1,15 @@
 package io.github.jopenlibs.dbkqueue.config.impl
 
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult.Companion.finish
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.config.TaskLifecycleListener
+import io.github.jopenlibs.dbkqueue.settings.QueueId
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Test
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult.Companion.finish
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.config.TaskLifecycleListener
-import ru.yoomoney.tech.dbqueue.settings.QueueId
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
 import java.util.*
 
 class CompositeTaskLifecycleListenerTest {
@@ -17,12 +17,12 @@ class CompositeTaskLifecycleListenerTest {
     fun should_handle_picked_in_order() {
         val events: MutableList<String> = ArrayList()
         val firstListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "1",
                 events
             )
         val secondListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "2",
                 events
             )
@@ -30,9 +30,9 @@ class CompositeTaskLifecycleListenerTest {
             Arrays.asList(firstListener, secondListener)
         )
         compositeListener.picked(
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.SHARD_ID,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.LOCATION,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.TASK_RECORD, 42L)
+            SHARD_ID,
+            LOCATION,
+            TASK_RECORD, 42L)
         Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("1:picked", "2:picked")))
     }
 
@@ -40,12 +40,12 @@ class CompositeTaskLifecycleListenerTest {
     fun should_handle_started_in_order() {
         val events: MutableList<String> = ArrayList()
         val firstListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "1",
                 events
             )
         val secondListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "2",
                 events
             )
@@ -53,9 +53,9 @@ class CompositeTaskLifecycleListenerTest {
             Arrays.asList(firstListener, secondListener)
         )
         compositeListener.started(
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.SHARD_ID,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.LOCATION,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.TASK_RECORD
+            SHARD_ID,
+            LOCATION,
+            TASK_RECORD
         )
         Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("1:started", "2:started")))
     }
@@ -64,12 +64,12 @@ class CompositeTaskLifecycleListenerTest {
     fun should_handle_executed_in_order() {
         val events: MutableList<String> = ArrayList()
         val firstListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "1",
                 events
             )
         val secondListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "2",
                 events
             )
@@ -77,9 +77,12 @@ class CompositeTaskLifecycleListenerTest {
             Arrays.asList(firstListener, secondListener)
         )
         compositeListener.executed(
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.SHARD_ID,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.LOCATION,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.TASK_RECORD, finish(), 42L)
+            SHARD_ID,
+            LOCATION,
+            TASK_RECORD,
+            finish(),
+            42L
+        )
         Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("2:executed", "1:executed")))
     }
 
@@ -87,12 +90,12 @@ class CompositeTaskLifecycleListenerTest {
     fun should_handle_finished_in_order() {
         val events: MutableList<String> = ArrayList()
         val firstListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "1",
                 events
             )
         val secondListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "2",
                 events
             )
@@ -100,9 +103,9 @@ class CompositeTaskLifecycleListenerTest {
             Arrays.asList(firstListener, secondListener)
         )
         compositeListener.finished(
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.SHARD_ID,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.LOCATION,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.TASK_RECORD
+            SHARD_ID,
+            LOCATION,
+            TASK_RECORD
         )
         Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("2:finished", "1:finished")))
     }
@@ -111,12 +114,12 @@ class CompositeTaskLifecycleListenerTest {
     fun should_handle_crashed_in_order() {
         val events: MutableList<String> = ArrayList()
         val firstListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "1",
                 events
             )
         val secondListener =
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.StubTaskLifecycleListener(
+            StubTaskLifecycleListener(
                 "2",
                 events
             )
@@ -124,9 +127,9 @@ class CompositeTaskLifecycleListenerTest {
             Arrays.asList(firstListener, secondListener)
         )
         compositeListener.crashed(
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.SHARD_ID,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.LOCATION,
-            io.github.jopenlibs.dbkqueue.config.impl.CompositeTaskLifecycleListenerTest.Companion.TASK_RECORD, null)
+            SHARD_ID,
+            LOCATION,
+            TASK_RECORD, null)
         Assert.assertThat<List<String>>(events, CoreMatchers.equalTo(mutableListOf("2:crashed", "1:crashed")))
     }
 

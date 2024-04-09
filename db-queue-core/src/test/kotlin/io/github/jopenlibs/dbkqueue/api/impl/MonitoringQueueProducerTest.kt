@@ -4,6 +4,10 @@ import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Logger
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core.read.ListAppender
+import io.github.jopenlibs.dbkqueue.api.EnqueueResult
+import io.github.jopenlibs.dbkqueue.api.QueueProducer
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.settings.QueueId
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -14,11 +18,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import org.mockito.stubbing.Answer
 import org.slf4j.LoggerFactory
-import io.github.jopenlibs.dbkqueue.api.EnqueueParams
-import ru.yoomoney.tech.dbqueue.api.EnqueueResult
-import ru.yoomoney.tech.dbqueue.api.QueueProducer
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.settings.QueueId
 import java.time.Clock
 
 class MonitoringQueueProducerTest {

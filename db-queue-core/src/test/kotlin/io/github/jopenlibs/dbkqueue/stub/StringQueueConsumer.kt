@@ -1,9 +1,9 @@
 package io.github.jopenlibs.dbkqueue.stub
 
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.api.TaskPayloadTransformer
-import ru.yoomoney.tech.dbqueue.api.impl.NoopPayloadTransformer
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.api.TaskPayloadTransformer
+import io.github.jopenlibs.dbkqueue.api.impl.NoopPayloadTransformer
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
 
 /**
  * Queue consumer without payload transformation

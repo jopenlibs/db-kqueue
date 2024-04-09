@@ -1,6 +1,6 @@
 package io.github.jopenlibs.dbkqueue.api.impl
 
-import ru.yoomoney.tech.dbqueue.api.TaskPayloadTransformer
+import io.github.jopenlibs.dbkqueue.api.TaskPayloadTransformer
 
 /**
  * Default payload transformer, which performs no transformation

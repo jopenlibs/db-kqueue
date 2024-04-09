@@ -1,19 +1,18 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult.Companion.fail
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult.Companion.finish
+import io.github.jopenlibs.dbkqueue.api.TaskExecutionResult.Companion.reenqueue
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.dao.QueueDao
+import io.github.jopenlibs.dbkqueue.settings.QueueId
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.settings.ReenqueueRetryType
+import io.github.jopenlibs.dbkqueue.settings.ReenqueueSettings
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 import org.mockito.Mockito
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult.Companion.fail
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult.Companion.finish
-import ru.yoomoney.tech.dbqueue.api.TaskExecutionResult.Companion.reenqueue
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.config.QueueShard
-import ru.yoomoney.tech.dbqueue.dao.QueueDao
-import ru.yoomoney.tech.dbqueue.settings.QueueId
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueRetryType
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueSettings
-import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
 import java.time.Duration
 
 /**

@@ -1,11 +1,10 @@
 package io.github.jopenlibs.dbkqueue.internal.runner
 
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.config.QueueShard
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueProcessingStatus
-import ru.yoomoney.tech.dbqueue.internal.processing.TaskPicker
-import ru.yoomoney.tech.dbqueue.internal.processing.TaskProcessor
-import ru.yoomoney.tech.dbqueue.settings.ProcessingMode
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.internal.processing.QueueProcessingStatus
+import io.github.jopenlibs.dbkqueue.internal.processing.TaskPicker
+import io.github.jopenlibs.dbkqueue.internal.processing.TaskProcessor
 
 /**
  * Исполнитель задач очереди в режиме

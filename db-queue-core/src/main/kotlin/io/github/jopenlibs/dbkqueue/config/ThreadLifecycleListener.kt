@@ -1,6 +1,6 @@
 package io.github.jopenlibs.dbkqueue.config
 
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
 
 /**
  * Listener for task processing thread in the queue.

@@ -1,14 +1,14 @@
 package io.github.jopenlibs.dbkqueue.stub
 
-import ru.yoomoney.tech.dbqueue.settings.ExtSettings
-import ru.yoomoney.tech.dbqueue.settings.FailRetryType
-import ru.yoomoney.tech.dbqueue.settings.FailureSettings
-import ru.yoomoney.tech.dbqueue.settings.PollSettings
-import ru.yoomoney.tech.dbqueue.settings.ProcessingMode
-import ru.yoomoney.tech.dbqueue.settings.ProcessingSettings
-import ru.yoomoney.tech.dbqueue.settings.QueueSettings
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueRetryType
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueSettings
+import io.github.jopenlibs.dbkqueue.settings.ExtSettings
+import io.github.jopenlibs.dbkqueue.settings.FailRetryType
+import io.github.jopenlibs.dbkqueue.settings.FailureSettings
+import io.github.jopenlibs.dbkqueue.settings.PollSettings
+import io.github.jopenlibs.dbkqueue.settings.ProcessingMode
+import io.github.jopenlibs.dbkqueue.settings.ProcessingSettings
+import io.github.jopenlibs.dbkqueue.settings.QueueSettings
+import io.github.jopenlibs.dbkqueue.settings.ReenqueueRetryType
+import io.github.jopenlibs.dbkqueue.settings.ReenqueueSettings
 import java.time.Duration
 
 object TestFixtures {

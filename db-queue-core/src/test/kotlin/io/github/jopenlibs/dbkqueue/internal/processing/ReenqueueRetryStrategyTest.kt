@@ -1,14 +1,14 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.internal.processing.ReenqueueRetryStrategy.Factory.create
+import io.github.jopenlibs.dbkqueue.settings.ReenqueueRetryType
+import io.github.jopenlibs.dbkqueue.settings.ReenqueueSettings
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.internal.processing.ReenqueueRetryStrategy.Factory.create
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueRetryType
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueSettings
 import java.time.Duration
 import java.util.*
 import java.util.stream.Collectors
@@ -29,7 +29,7 @@ class ReenqueueRetryStrategyTest {
         thrown.expectMessage("re-enqueue delay must be set explicitly via 'reenqueue(Duration)' method call")
 
         strategy.calculateDelay(
-            io.github.jopenlibs.dbkqueue.internal.processing.ReenqueueRetryStrategyTest.Companion.createTaskRecord(
+            createTaskRecord(
                 0
             )
         )
@@ -47,7 +47,7 @@ class ReenqueueRetryStrategyTest {
 
         val delays = IntStream.range(0, 5)
             .mapToObj { reenqueueAttemptsCount: Int ->
-                io.github.jopenlibs.dbkqueue.internal.processing.ReenqueueRetryStrategyTest.Companion.createTaskRecord(
+                createTaskRecord(
                     reenqueueAttemptsCount.toLong()
                 )
             }
@@ -73,7 +73,7 @@ class ReenqueueRetryStrategyTest {
 
         val delays = IntStream.range(0, 5)
             .mapToObj { reenqueueAttemptsCount: Int ->
-                io.github.jopenlibs.dbkqueue.internal.processing.ReenqueueRetryStrategyTest.Companion.createTaskRecord(
+                createTaskRecord(
                     reenqueueAttemptsCount.toLong()
                 )
             }
@@ -107,7 +107,7 @@ class ReenqueueRetryStrategyTest {
 
         val delays = IntStream.range(0, 5)
             .mapToObj { reenqueueAttemptsCount: Int ->
-                io.github.jopenlibs.dbkqueue.internal.processing.ReenqueueRetryStrategyTest.Companion.createTaskRecord(
+                createTaskRecord(
                     reenqueueAttemptsCount.toLong()
                 )
             }
@@ -141,7 +141,7 @@ class ReenqueueRetryStrategyTest {
 
         val delays = IntStream.range(0, 5)
             .mapToObj { reenqueueAttemptsCount: Int ->
-                io.github.jopenlibs.dbkqueue.internal.processing.ReenqueueRetryStrategyTest.Companion.createTaskRecord(
+                createTaskRecord(
                     reenqueueAttemptsCount.toLong()
                 )
             }

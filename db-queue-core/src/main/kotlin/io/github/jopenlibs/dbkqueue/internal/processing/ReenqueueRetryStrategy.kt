@@ -1,8 +1,8 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueRetryType
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueSettings
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.settings.ReenqueueRetryType
+import io.github.jopenlibs.dbkqueue.settings.ReenqueueSettings
 import java.time.Duration
 import java.util.*
 import kotlin.math.pow

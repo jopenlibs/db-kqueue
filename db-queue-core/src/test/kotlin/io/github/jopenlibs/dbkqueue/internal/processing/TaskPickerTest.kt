@@ -1,22 +1,21 @@
 package io.github.jopenlibs.dbkqueue.internal.processing
 
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.api.TaskRecord
+import io.github.jopenlibs.dbkqueue.config.QueueShard
+import io.github.jopenlibs.dbkqueue.config.QueueShardId
+import io.github.jopenlibs.dbkqueue.config.TaskLifecycleListener
+import io.github.jopenlibs.dbkqueue.dao.QueuePickTaskDao
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.settings.QueueId
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.stub.FakeMillisTimeProvider
+import io.github.jopenlibs.dbkqueue.stub.TestFixtures
 import kotlinx.coroutines.runBlocking
 import org.hamcrest.CoreMatchers
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.api.TaskRecord
-import ru.yoomoney.tech.dbqueue.config.QueueShard
-import ru.yoomoney.tech.dbqueue.config.QueueShardId
-import ru.yoomoney.tech.dbqueue.config.TaskLifecycleListener
-import ru.yoomoney.tech.dbqueue.dao.QueuePickTaskDao
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
-import ru.yoomoney.tech.dbqueue.settings.QueueId
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
-import ru.yoomoney.tech.dbqueue.stub.FakeMillisTimeProvider
-import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
-import ru.yoomoney.tech.dbqueue.stub.TestFixtures
 
 /**
  * @author Oleg Kandaurov

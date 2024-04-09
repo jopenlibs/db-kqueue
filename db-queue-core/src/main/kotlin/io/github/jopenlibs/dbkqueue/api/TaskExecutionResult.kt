@@ -1,6 +1,5 @@
 package io.github.jopenlibs.dbkqueue.api
 
-import ru.yoomoney.tech.dbqueue.settings.ReenqueueRetryType
 import java.time.Duration
 import java.util.*
 

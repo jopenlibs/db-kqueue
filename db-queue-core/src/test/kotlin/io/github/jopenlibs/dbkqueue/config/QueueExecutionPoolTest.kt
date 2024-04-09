@@ -1,5 +1,16 @@
 package io.github.jopenlibs.dbkqueue.config
 
+import io.github.jopenlibs.dbkqueue.api.QueueConsumer
+import io.github.jopenlibs.dbkqueue.internal.processing.QueueLoop
+import io.github.jopenlibs.dbkqueue.internal.processing.QueueTaskPoller
+import io.github.jopenlibs.dbkqueue.internal.processing.SyncQueueLoop
+import io.github.jopenlibs.dbkqueue.internal.runner.QueueRunner
+import io.github.jopenlibs.dbkqueue.settings.QueueConfig
+import io.github.jopenlibs.dbkqueue.settings.QueueId
+import io.github.jopenlibs.dbkqueue.settings.QueueLocation
+import io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer
+import io.github.jopenlibs.dbkqueue.stub.StringQueueConsumer
+import io.github.jopenlibs.dbkqueue.stub.TestFixtures
 import kotlinx.coroutines.runBlocking
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
@@ -11,25 +22,12 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import ru.yoomoney.tech.dbqueue.api.QueueConsumer
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueLoop
-import ru.yoomoney.tech.dbqueue.internal.processing.QueueTaskPoller
-import ru.yoomoney.tech.dbqueue.internal.processing.SyncQueueLoop
-import ru.yoomoney.tech.dbqueue.internal.runner.QueueRunner
-import ru.yoomoney.tech.dbqueue.settings.QueueConfig
-import ru.yoomoney.tech.dbqueue.settings.QueueId
-import ru.yoomoney.tech.dbqueue.settings.QueueLocation
-import io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer
-import ru.yoomoney.tech.dbqueue.stub.StringQueueConsumer
-import io.github.jopenlibs.dbkqueue.stub.StubDatabaseAccessLayer
-import ru.yoomoney.tech.dbqueue.stub.TestFixtures
 import java.time.Duration
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Future
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
-import kotlin.test.Ignore
 
 /**
  * @author Oleg Kandaurov
@@ -46,11 +44,11 @@ class QueueExecutionPoolTest {
             )
                 .build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
-        val queueRunner = Mockito.mock(QueueRunner::class.java)
-        val queueTaskPoller = Mockito.mock(QueueTaskPoller::class.java)
-        val queueLoop = Mockito.mock(QueueLoop::class.java)
-        val executor: ExecutorService = Mockito.spy(io.github.jopenlibs.dbkqueue.config.DirectExecutor())
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
+        val queueRunner: QueueRunner = mock()
+        val queueTaskPoller: QueueTaskPoller = mock()
+        val queueLoop: QueueLoop = mock()
+        val executor: ExecutorService = Mockito.spy(DirectExecutor())
         val pool = QueueExecutionPool(
             consumer as QueueConsumer<Any?>, DEFAULT_SHARD, queueTaskPoller, executor,
             queueRunner
@@ -66,7 +64,7 @@ class QueueExecutionPoolTest {
             QueueLocation.builder().withTableName("testTable").withQueueId(QueueId("queue1")).build(),
             TestFixtures.createQueueSettings().build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
         val queueRunner = Mockito.mock(QueueRunner::class.java)
         val queueTaskPoller = Mockito.mock(QueueTaskPoller::class.java)
         val executor = Mockito.mock(ExecutorService::class.java)
@@ -89,7 +87,7 @@ class QueueExecutionPoolTest {
             QueueLocation.builder().withTableName("testTable").withQueueId(QueueId("queue1")).build(),
             TestFixtures.createQueueSettings().build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
         val queueRunner = Mockito.mock(QueueRunner::class.java)
         val queueTaskPoller = Mockito.mock(QueueTaskPoller::class.java)
         val queueLoop = Mockito.mock(QueueLoop::class.java)
@@ -113,7 +111,7 @@ class QueueExecutionPoolTest {
             QueueLocation.builder().withTableName("testTable").withQueueId(QueueId("queue1")).build(),
             TestFixtures.createQueueSettings().build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
         val queueRunner = Mockito.mock(QueueRunner::class.java)
         val queueTaskPoller = Mockito.mock(QueueTaskPoller::class.java)
         val executor = Mockito.mock(ExecutorService::class.java)
@@ -137,7 +135,7 @@ class QueueExecutionPoolTest {
             QueueLocation.builder().withTableName("testTable").withQueueId(QueueId("queue1")).build(),
             TestFixtures.createQueueSettings().build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
         val queueRunner = Mockito.mock(QueueRunner::class.java)
         val queueTaskPoller = Mockito.mock(QueueTaskPoller::class.java)
         val executor = Mockito.mock(ExecutorService::class.java)
@@ -155,7 +153,7 @@ class QueueExecutionPoolTest {
             QueueLocation.builder().withTableName("testTable").withQueueId(QueueId("queue1")).build(),
             TestFixtures.createQueueSettings().build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
         val queueRunner = Mockito.mock(QueueRunner::class.java)
         val queueTaskPoller = Mockito.mock(QueueTaskPoller::class.java)
         val executor = Mockito.mock(ExecutorService::class.java)
@@ -173,11 +171,11 @@ class QueueExecutionPoolTest {
             QueueLocation.builder().withTableName("testTable").withQueueId(QueueId("queue1")).build(),
             TestFixtures.createQueueSettings().build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
-        val queueRunner = Mockito.mock(QueueRunner::class.java)
-        val queueTaskPoller = Mockito.mock(QueueTaskPoller::class.java)
-        val executor = Mockito.mock(ExecutorService::class.java)
-        val queueLoop = Mockito.mock(QueueLoop::class.java)
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
+        val queueRunner: QueueRunner = mock()
+        val queueTaskPoller: QueueTaskPoller = mock()
+        val executor: ExecutorService = mock()
+        val queueLoop: QueueLoop = mock()
         val pool = QueueExecutionPool(
             consumer as QueueConsumer<Any?>, DEFAULT_SHARD, queueTaskPoller, executor, queueRunner
         ) { queueLoop }
@@ -191,11 +189,11 @@ class QueueExecutionPoolTest {
             QueueLocation.builder().withTableName("testTable").withQueueId(QueueId("queue1")).build(),
             TestFixtures.createQueueSettings().build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
-        val queueRunner = Mockito.mock(QueueRunner::class.java)
-        val queueTaskPoller = Mockito.mock(QueueTaskPoller::class.java)
-        val executor = Mockito.mock(ExecutorService::class.java)
-        val queueLoop = Mockito.mock(QueueLoop::class.java)
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
+        val queueRunner: QueueRunner = mock()
+        val queueTaskPoller: QueueTaskPoller = mock()
+        val executor: ExecutorService = mock()
+        val queueLoop: QueueLoop = mock()
         Mockito.`when`(executor.submit(ArgumentMatchers.any(Runnable::class.java))).thenReturn(
             Mockito.mock(
                 Future::class.java
@@ -221,7 +219,7 @@ class QueueExecutionPoolTest {
                     TestFixtures.createProcessingSettings().withThreadCount(0).build()
                 ).build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
         val queueRunner: QueueRunner = mock()
         val queueTaskPoller: QueueTaskPoller = mock()
 
@@ -269,7 +267,7 @@ class QueueExecutionPoolTest {
                     TestFixtures.createProcessingSettings().withThreadCount(0).build()
                 ).build()
         )
-        val consumer: StringQueueConsumer = io.github.jopenlibs.dbkqueue.stub.NoopQueueConsumer(queueConfig)
+        val consumer: StringQueueConsumer = NoopQueueConsumer(queueConfig)
         val queueRunner: QueueRunner = mock()
         val queueTaskPoller: QueueTaskPoller = mock()
         val executor = spy(
