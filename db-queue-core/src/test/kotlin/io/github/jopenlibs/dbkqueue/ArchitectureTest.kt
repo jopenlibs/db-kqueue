@@ -56,7 +56,7 @@ class ArchitectureTest {
 
 
     companion object {
-        private const val BASE_PACKAGE = "ru.yoomoney.tech.dbqueue"
+        private const val BASE_PACKAGE = "io.github.jopenlibs.dbkqueue"
 
         private fun fullNames(vararg relativeName: String): Array<String> {
             return Arrays.stream(relativeName).map { name: String -> BASE_PACKAGE + "." + name }
