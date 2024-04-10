@@ -4,7 +4,8 @@ plugins {
 
 rootProject.name = "db-kqueue"
 
-include(":db-queue-core")
-//include(":db-queue-spring")
+include(":db-kqueue-core")
+include(":db-kqueue-spring:db-kqueue-spring-r2dbc-postgresql")
+
 //include(":db-queue-brave")
 //include(":db-queue-test")
